@@ -29,3 +29,19 @@ class TestCreateRoom(unittest.TestCase):
         self.assertTrue(multiple_offices)
 
 
+class TestAddPersonn(unittest.TestCase):
+    # check if person is added
+
+    # check if person_name is a string
+
+    # check if room is allocated
+
+    # check if adding accomodation for staff returns an error
+
+    # add a staff member and check if type of person is staff
+
+    # check if room is allocated to person
+
+    # add fellow who wants accomodation. check if living space is allocated
+
+    
