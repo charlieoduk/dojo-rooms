@@ -3,10 +3,11 @@ from livingspace import LivingSpace
 
 class Dojo(object):
     """docstring for Dojo"""
-    dojo_offices = []
-    dojo_livingspaces = []
+    dojo_offices = {}
+    dojo_livingspaces = {}
+    staff_and_fellows = {}
 
-    
+
     def create_room(room_type, *room_name):        
         # if isinstance(room_type, str) and isinstance(room_name, str)
         if type(room_type) == str and type(room_name) == str:
@@ -17,7 +18,7 @@ class Dojo(object):
                     # loop through range in room name to create multiple rooms
                     for room in room_name:
                         new_office = Office(room)
-                        dojo_offices.append(new_office)
+                        dojo_offices[new_office] = []
                         print('A new office called {} has been created'.format(room))
                 else:
                     print('The room {} already exists'.format(room_name))
@@ -28,7 +29,7 @@ class Dojo(object):
                     # loop through range in living space to create multiple rooms
                     for room in room_name:
                         new_livingspace = LivingSpace(room)
-                        dojo_livingspaces.append(new_livingspace)
+                        dojo_livingspaces[new_livingspace] = []
                         print('A new living space called {} has been created'.format(room))
                 else:
                     print('The room {} already exists'.format(room_name))
@@ -39,5 +40,11 @@ class Dojo(object):
         # else raise value error 
         else:
             raise ValueError
+
+
+        def add_person(name, position, wants_accomodation):
+            # if name is a string
+                # adds a person to the system
+                # allocates to a random room
 
         
