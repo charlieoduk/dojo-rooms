@@ -62,13 +62,13 @@ class TestCreateRoom(unittest.TestCase):
     def test_create_room_check_multiple_rooms_created(self):
         multiple_offices = self.the_dojo.create_room('Kilimanjaro','Serengeti','Nzoia', 'office')
         self.assertTrue(self.multiple_offices)
+    # Test if room already exists
 
 
 class TestAddPerson(unittest.TestCase):
     def setUp(self):
         self.the_dojo = Dojo()
-        self.add_person = add_person()
-
+        self.add_person = add_person()        
     # check if person is added
     def test_if_person_is_added(self):
         new_person = self.the_dojo.add_person('Andrew', 'staff')
@@ -79,18 +79,22 @@ class TestAddPerson(unittest.TestCase):
         self.assertIsInstance(new_person, str)
     # check if room is allocated
     def test_if_room_is_allocated_to_staff(self):
-        pass
-
+        new_person =self.the_dojo.add_person('Charles', 'staff')
+        allocate_room = self.new_person.allocate_room()
+        self.assertTrue(self.allocate_room)
     # check if adding accomodation for staff returns an error
     def test_check_if_adding_accomodation_for_staff_returns_error(self):
-        pass
-
+        new_staff_member = self.the_dojo.add_person('Wanjiku','staff')
+        allocate_room = self.new_staff_member.allocate_room()
+        self.assertError(self.allocate_room, ValueError, msg = 'You cannot allocate a living space to staff')
     # add a staff member and check if type of person is staffperson
     def test_add_staff_then_check_if_added_person_is_instance_staff(self):
-        pass
-
+        new_staff_member =self.the_dojo.add_person('Brenda','staff')
+        self.assertIsInstance(self.new_staff_member, Staff)
     # add fellow who wants accomodation. check if living space is allocated
     def test_check_if_living_space_is_allocated_for_fellow_who_wants_accommodation(self):
-        pass
+        new_fellow = self.the_dojo.add_person('Muna' 'fellow')
+        allocate_room = self.new_fellow.allocate_room()
+        self.assertTrue(self.allocate_room)
 
     
