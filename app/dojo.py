@@ -41,17 +41,21 @@ class Dojo(object):
 
 
     def add_person(self, name, position, wants_accomodation):
-        if position == 'STAFF':
-            self.staff_and_fellows[name] = 'staff'
-            print('Staff {} has been succesfully added'.format(name))
+        if (position == 'STAFF') or (position == 'FELLOW'):
+            self.staff_and_fellows[name] = position
+            print('{} {} has been succesfully added.'.format(position,name))
             # adds a person to the system
             # allocates to a random room
             def allocate_random_room():
                 random_room = random.choice(list(self.dojo_offices))
-                if self.dojo_offices
-                self.dojo_offices[random_room].append(name)
-                print(self.dojo_offices)
-                print(name)
-        allocate_random_room()
+                if (len(self.dojo_offices[random_room])) < 6:
+                    self.dojo_offices[random_room].append(name)
+                    print('{} has been allocated the office {}'.format(name,random_room))
+                else:
+                    allocate_random_room()
+                
+            allocate_random_room()
+        else:
+
                 
             
