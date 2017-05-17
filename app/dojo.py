@@ -96,7 +96,20 @@ class Dojo(object):
         elif name in self.dojo_livingspaces:
             print_out(self.dojo_livingspaces)
         else:
-            print('Sorry the rrom does not exist')
+            print('Sorry the room does not exist')
+            
+
+    def print_allocations(self):
+        # get a list of all the keys
+        print_allocations_list = []
+        for key, value in self.dojo_offices:
+            print_allocations_list.append(key)
+        # for every key iterate through and print out allocations
+        for i in range len(print_allocations_list):
+            print(self.dojo_offices[print_allocations_list[i]])
+            print('____________________________________________________')
+            for names in self.dojo_offices[print_allocations_list[i]]:
+                print(names, end=', ')
 
 
 
