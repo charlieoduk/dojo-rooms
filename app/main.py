@@ -13,7 +13,6 @@ Options:
     -h, --help  Show this screen and exit.
     --baud=<n>  Baudrate [default: 9600]
 """
-
 import sys
 import cmd
 from docopt import docopt, DocoptExit
@@ -78,8 +77,7 @@ class MyInteractive (cmd.Cmd):
         person_name = person_name.lower()
         job_type = args["<job_type>"]
         job_type = job_type.lower()
-        accomodation = args["wants_accommodation"]
-        accomodation = accomodation.lower()
+        accomodation = args["<wants_accommodation>"]
         wants_accommodation = ''
         position = ''
         
@@ -108,14 +106,17 @@ class MyInteractive (cmd.Cmd):
     @docopt_cmd
     def do_print_room(self, args):
         """Usage: print_room <room_name>"""
-        pass
+        room_name = args ["<room_name>"]
+
+        result = dojo.print_name(room_name)
 
 
 
     @docopt_cmd
-    def do_print_room(self, args):
+    def do_print_allocations(self, args):
         """Usage: print_allocations [-o=filename]"""
-        pass
+
+        dojo.print_allocations()
 
 
 
