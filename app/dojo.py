@@ -19,7 +19,9 @@ class Dojo(object):
         if room_type == 'office':
             # check if room exists
             if room_name not in self.dojo_offices:
-                self.dojo_offices[room_name] = []
+                # create an office
+                new_office = Office(room_name)
+                self.dojo_offices[new_office] = []
                 print('A new office called {} has been created'.format(room_name))
             else:
                 print('The room {} already exists'.format(room_name))
@@ -27,7 +29,8 @@ class Dojo(object):
         elif room_name == 'livingspace':
             # check if room already exists
             if room_type not in self.dojo_livingspaces:
-                self.dojo_livingspaces[room_name] = []
+                new_livingspace = LivingSpace(room_name)
+                self.dojo_livingspaces[new_livingspace] = []
                 print('A new living space called {} has been created'.format(room))
             else:
                 print('The room {} already exists'.format(room_name))
@@ -41,21 +44,53 @@ class Dojo(object):
 
 
     def add_person(self, name, position, wants_accomodation):
-        if (position == 'STAFF') or (position == 'FELLOW'):
-            self.staff_and_fellows[name] = position
-            print('{} {} has been succesfully added.'.format(position,name))
+        office ='office'
+        livingspace = 'Living space'
+        # A function that allocates a random room
+        def allocate_random_room(room_dictionary, type_of_room, max_num_of_people):
+            random_room = random.choice(list(room_dictionary))
+            if (len(room_dictionary[random_room])) < max_num_of_people:
+                room_dictionary[random_room].append(name)
+                print('{} has been allocated the {} {}'.format(name,type_of_room, random_room))
+            else:
+                allocate_random_room(room_dictionary,type_of_room,max_num_of_people)
+
+        if (position == 'STAFF') and (wants_accomodation == 'N'):
             # adds a person to the system
-            # allocates to a random room
-            def allocate_random_room():
-                random_room = random.choice(list(self.dojo_offices))
-                if (len(self.dojo_offices[random_room])) < 6:
-                    self.dojo_offices[random_room].append(name)
-                    print('{} has been allocated the office {}'.format(name,random_room))
-                else:
-                    allocate_random_room()
-                
-            allocate_random_room()
+            new_staff = Staff(name)
+            self.staff_and_fellows[new_staff] = position            
+            # allocate staff a random room
+            allocate_random_room(self.dojo_offices,office, Office().max_people)
+
+        elif (position == 'STAFF') and (wants_accomodation == 'Y'):
+            print('Sorry there are no living spaces available for staff')
+
+        elif (position == 'FELLOW') and (wants_accomodation == 'N'):
+            # Adds fellow to the system
+            new_fellow = Fellow(name)
+            self.staff_and_fellows[new_fellow] = position
+            # Allocate the fellow a random room
+            allocate_random_room(self.dojo_offices,office, Office().max_people)        
+
         else:
+            # Adds fellow to the system
+            new_fellow = Fellow(name)
+            self.staff_and_fellows[new_fellow] = position
+            # Allocate the fellow a random room
+            allocate_random_room(self.dojo_offices,office, Office().max_people)
+            allocate_random_room(self.dojo_livingspaces,livingspace, LivingSpace().max_people)
+
+
+    def print_name(self, name):
+        pass
+
+
+
+            
+
+            
+           
+     
 
                 
             
