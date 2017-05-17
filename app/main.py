@@ -3,8 +3,8 @@ This example uses docopt with the built in cmd module to demonstrate an
 interactive command application.
 Usage:
     dojo-rooms create_room <room_type> <room_name>...
-    dojo-rooms add_person <person_name> <job_type> [wants_accommodation] 
-    dojo-rooms print_allocations [-o=filename]
+    dojo-rooms add_person <person_name> <job_type> [--a=<wants_accommodation>] 
+    dojo-rooms print_allocations [<filename>]
     dojo-rooms print_room <room_name>
     dojo-rooms (-i | --interactive)
     dojo-rooms (-h | --help | --version)
@@ -67,17 +67,17 @@ class MyInteractive (cmd.Cmd):
         
         for name in room_names:
             result = dojo.create_room(room_type,name)
-            # print("You entered %s as room type"%room_type)
-            # print("You entered %s as room name"%name)
+        
 
     @docopt_cmd
     def do_add_person(self, args):
-        """Usage: add_person <person_name> <job_type> [wants_accommodation]"""
+        """Usage: add_person <person_name> <job_type> [--a=<wants_accommodation>]"""
+        print(args)
         person_name = args["<person_name>"]
         person_name = person_name.lower()
         job_type = args["<job_type>"]
         job_type = job_type.lower()
-        accomodation = args["<wants_accommodation>"]
+        accomodation = args["--a"]
         wants_accommodation = ''
         position = ''
         
@@ -114,9 +114,11 @@ class MyInteractive (cmd.Cmd):
 
     @docopt_cmd
     def do_print_allocations(self, args):
-        """Usage: print_allocations [-o=filename]"""
+        """Usage: print_allocations [<filename>]"""
+        filename = args["<filename>"]
 
-        dojo.print_allocations()
+        dojo.print_allocations(filename)
+        
 
 
 
@@ -133,4 +135,6 @@ if opt['--interactive']:
     MyInteractive().cmdloop()
 
 print(opt)
+
+
 
