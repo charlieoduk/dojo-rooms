@@ -20,45 +20,45 @@ class Dojo(object):
 
 
     def create_room(self,room_type, room_name):              
-        # if isinstance(room_type, str) and isinstance(room_name, str)
-        # if type(room_type) == str and type(room_name) == str:
-            # if room type is office
-        if room_type == 'office':
-            # check if room exists
-            if room_name not in self.dojo_offices:
-                # create an office
-                new_office = Office(room_name)
-                self.dojo_offices[room_name] = []
-                print('A new office called {} has been created'.format(room_name))
-            else:
-                print('The room {} already exists'.format(room_name))
+        if type(room_name) == str:
+            if room_type == 'OFFICE':
+                # check if room exists
+                if room_name not in self.dojo_offices:
+                    # create an office
+                    new_office = Office(room_name)
+                    self.dojo_offices[room_name] = []
+                    print('A new office called {} has been created'.format(room_name))
+                else:
+                    print('The room {} already exists'.format(room_name))
 
-        # if room is living space
-        elif room_name == 'livingspace':
-            # check if room already exists
-            if room_type not in self.dojo_livingspaces:
-                new_livingspace = LivingSpace(room_name)
-                self.dojo_livingspaces[new_livingspace] = []
-                print('A new living space called {} has been created'.format(room))
+            # if room is living space
+            elif room_type == 'LIVINGSPACE':
+                # check if room already exists
+                if room_type not in self.dojo_livingspaces:
+                    new_livingspace = LivingSpace(room_name)
+                    self.dojo_livingspaces[new_livingspace] = []
+                    print('A new living space called {} has been created'.format(room_name))
+                else:
+                    print('The room {} already exists'.format(room_name))
+            # else
             else:
-                print('The room {} already exists'.format(room_name))
-        # else
+                # invalid room
+                print('You have entered an invalid room. Please enter office or Livingspace') 
         else:
-            # invalid room
-            print('You have entered an invalid room')
-        # else raise value error 
-        # else:
-            # raise ValueError
+            print('Please enter a valid room name')
         
-
+    # A function that allocates a person to a random office
     def allocate_random_office(self,name):
         random_room = random.choice(list(self.dojo_offices))
         if (len(self.dojo_offices[random_room])) < Office.max_people:
             self.dojo_offices[random_room].append(name)
             print('{} has been allocated the office {}'.format(name,random_room))
         else:
-            self.allocate_random_office()
-
+            try:
+                self.allocate_random_office(name)
+            except:
+                pri
+    # A function that allocates a person to a random office
     def allocate_random_livingspace(self,name):
         random_room = random.choice(list(self.dojo_livingspaces))
         if (len(self.dojo_livingspaces[random_room])) < LivingSpace.max_people:
@@ -97,30 +97,33 @@ class Dojo(object):
                     self.unallocated.append(name)
                     print('There are no rooms available {} added to the unallocated list'.format(name))
 
+    # A function that prints out a decorator and the members of a room
+    def print_out(self, room_to_iterate_through,name):       
+        # print the decoration
+        print('__________________________________________________\n')
+        # if the room is empty print out the room is currently empty
+        if len(self.dojo_offices[name]) == 0:
+            print('THIS ROOM IS CURRENTLY EMPTY')
+        # print print the names in the list seperated by a comma
+        for names in self.dojo_offices[name]:
+            print ' '+names, 
+        print('\n')
+
       
-    def print_name(self, name):        
+    def print_name(self, name):
+        # print the key as header
+        print("\n " + name)        
         # check if name is in offices
-
         if name in self.dojo_offices:
-            # print the key as header
-            print(name)
-            # print the decoration
-            print('__________________________________________________')
-            # print print the names in the list seperated by a comma
-            for names in self.dojo_offices[name]:
-                print(names, )
-
-        elif name in self.dojo_livingspaces:
-            # print the key as header
-            print(name)
-            # print the decoration
-            print('__________________________________________________')
-            # print print the names in the list seperated by a comma
-            for names in self.dojo_livingspaces[name]:
-                print(names, )
+            self.print_out(self.dojo_offices,name)
             
+        elif name in self.dojo_livingspaces:
+            self.print_out(self.dojo_livingspaces,name) 
+
         else:
             print('Sorry the room does not exist')
+
+
     def rooms_allocation(self,type_of_room):
         # get a list of all the keys
         
@@ -163,7 +166,22 @@ class Dojo(object):
             sys.stdout = orig_stdout
             saveFile.close()
 
-    def print_unallocated(self,filename)
+    def print_unallocated(self,filename):
+        # iterate through the list and print out the names
+        # if the user doest request a print out
+        if filename == None:
+            for name in (self.unallocated):
+                print name
+        else:
+            orig_stdout = sys.stdout
+            saveFile = open(filename, 'w')
+            sys.stdout = saveFile
+
+            for name in self.unallocated:
+                print name
+
+            sys.stdout = orig_stdout
+            saveFile.close()
 
         
 

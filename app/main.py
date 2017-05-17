@@ -51,11 +51,21 @@ def docopt_cmd(func):
     fn.__dict__.update(func.__dict__)
     return fn
 
+    click.echo('\n')
+    click.echo()
+    click.echo('*' + ' ' * 98 + '*')
+    click.echo('*' + ' ' * 98 + '*')
+    click.echo('*' + ' ' * 40 + 'THE WEATHER MAN!! ' + ' ' * 40+ '*')
+    click.echo('*' + ' ' * 98 + '*')
+    click.echo('*' + ' ' * 98 + '*')
+    click.echo('*' * 100)
+    click.echo('\n')
+
 
 class MyInteractive (cmd.Cmd):
-    intro = 'Welcome to my interactive program!' \
-        + ' (type help for a list of commands.)'
-    prompt = '(my_program) '
+    intro = ''
+        
+    prompt = ' Dojo '
     file = None
 
     @docopt_cmd
@@ -64,20 +74,19 @@ class MyInteractive (cmd.Cmd):
         room_type = args["<room_type>"]
         room_names = args["<room_name>"]
 
-        
+     
         for name in room_names:
-            result = dojo.create_room(room_type,name)
+            result = dojo.create_room(room_type.upper(),name.upper())
         
 
     @docopt_cmd
     def do_add_person(self, args):
         """Usage: add_person <person_name> <job_type> [--a=<wants_accommodation>]"""
-        print(args)
         person_name = args["<person_name>"]
-        person_name = person_name.lower()
+        person_name = person_name.upper()
         job_type = args["<job_type>"]
         job_type = job_type.lower()
-        accomodation = args["--a"]
+        accomodation = (args["--a"])
         wants_accommodation = ''
         position = ''
         
@@ -87,17 +96,19 @@ class MyInteractive (cmd.Cmd):
             position = 'STAFF'
         else:
             print('Please enter staff or fellow for the job_type field')
+            return
 
         if accomodation == None:
             wants_accommodation = 'N'
 
-        elif accomodation == 'n':
+        elif accomodation == 'n' or 'N':
             wants_accommodation ='N'
 
-        elif accomodation == 'y':
+        elif accomodation == 'y' or 'Y':
             wants_accommodation = 'Y'
         else:
             print('Please enter either N or Y for wants_accomodation field')
+            return
         
 
         result = dojo.add_person(person_name, position,wants_accommodation)
@@ -106,7 +117,7 @@ class MyInteractive (cmd.Cmd):
     @docopt_cmd
     def do_print_room(self, args):
         """Usage: print_room <room_name>"""
-        room_name = args ["<room_name>"]
+        room_name = (args ["<room_name>"]).upper()
 
         result = dojo.print_name(room_name)
 
@@ -120,6 +131,12 @@ class MyInteractive (cmd.Cmd):
         dojo.print_allocations(filename)
         
 
+    @docopt_cmd
+    def do_print_unallocated(self, args):
+        """Usage: print_unallocated [<filename>]"""
+        filename = args["<filename>"]
+
+        dojo.print_unallocated(filename)
 
 
 
@@ -132,6 +149,8 @@ class MyInteractive (cmd.Cmd):
 opt = docopt(__doc__, sys.argv[1:])
 
 if opt['--interactive']:
+    # os.system("clear")
+    # intro()
     MyInteractive().cmdloop()
 
 print(opt)
