@@ -4,6 +4,8 @@ interactive command application.
 Usage:
     dojo-rooms create_room <room_type> <room_name>...
     dojo-rooms add_person <person_name> <job_type> [wants_accommodation] 
+    dojo-rooms print_allocations [-o=filename]
+    dojo-rooms print_room <room_name>
     dojo-rooms (-i | --interactive)
     dojo-rooms (-h | --help | --version)
 Options:
@@ -73,8 +75,12 @@ class MyInteractive (cmd.Cmd):
     def do_add_person(self, args):
         """Usage: add_person <person_name> <job_type> [wants_accommodation]"""
         person_name = args["<person_name>"]
+        person_name = person_name.lower()
         job_type = args["<job_type>"]
+        job_type = job_type.lower()
         accomodation = args["wants_accommodation"]
+        accomodation = accomodation.lower()
+        wants_accommodation = ''
         position = ''
         
         if job_type == 'fellow':
@@ -82,10 +88,35 @@ class MyInteractive (cmd.Cmd):
         elif job_type == 'staff':
             position = 'STAFF'
         else:
-            print('Please enter staff or fellow')
+            print('Please enter staff or fellow for the job_type field')
+
+        if accomodation == None:
+            wants_accommodation = 'N'
+
+        elif accomodation == 'n':
+            wants_accommodation ='N'
+
+        elif accomodation == 'y':
+            wants_accommodation = 'Y'
+        else:
+            print('Please enter either N or Y for wants_accomodation field')
         
 
-        result = dojo.add_person(person_name, position,accomodation)
+        result = dojo.add_person(person_name, position,wants_accommodation)
+
+
+    @docopt_cmd
+    def do_print_room(self, args):
+        """Usage: print_room <room_name>"""
+        pass
+
+
+
+    @docopt_cmd
+    def do_print_room(self, args):
+        """Usage: print_allocations [-o=filename]"""
+        pass
+
 
 
 
