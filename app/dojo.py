@@ -1,4 +1,5 @@
 import random 
+import sys
 from collections import defaultdict
 from office import Office
 from livingspace import LivingSpace
@@ -97,20 +98,43 @@ class Dojo(object):
             print_out(self.dojo_livingspaces)
         else:
             print('Sorry the room does not exist')
+
+
+    def print_allocations(self,output):
+        def rooms_allocation(room_dictionary):
+            # get a list of all the keys
+            print_allocations_list = []
+            for key, value in room_dictionary:
+                print_allocations_list.append(key)
+            # for every key iterate through and print out allocations
+            for i in range len(print_allocations_list):
+                print(room_dictionary[print_allocations_list[i]])
+                print('____________________________________________________')
+                for names in room_dictionary[print_allocations_list[i]]:
+                    print(names, end=', ')
+        if output == 'NO':
+            print('_____________OFFICE ALLOCATION_______________')
+            rooms_allocation(self.dojo_offices)
+            print('_____________LIVING SPACE ALLOCATION_________')
+            rooms_allocation(self.dojo_livingspaces)
+
+        else:
+
+            orig_stdout = sys.stdout
+            saveFile = open('Print_allocations.txt', 'w')
+            sys.stdout = saveFile
+
+
+            print('_____________OFFICE ALLOCATION_______________')
+            rooms_allocation(self.dojo_offices)
+            print('_____________LIVING SPACE ALLOCATION_________')
+            rooms_allocation(self.dojo_livingspaces)
             
 
-    def print_allocations(self):
-        # get a list of all the keys
-        print_allocations_list = []
-        for key, value in self.dojo_offices:
-            print_allocations_list.append(key)
-        # for every key iterate through and print out allocations
-        for i in range len(print_allocations_list):
-            print(self.dojo_offices[print_allocations_list[i]])
-            print('____________________________________________________')
-            for names in self.dojo_offices[print_allocations_list[i]]:
-                print(names, end=', ')
+            sys.stdout = orig_stdout
+            saveFile.close()
 
+        
 
 
 
