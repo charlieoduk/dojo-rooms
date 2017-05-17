@@ -60,7 +60,7 @@ class Dojo(object):
             new_staff = Staff(name)
             self.staff_and_fellows[new_staff] = position            
             # allocate staff a random room
-            allocate_random_room(self.dojo_offices,office, Office().max_people)
+            allocate_random_room(self.dojo_offices,office, Office('Office').max_people)
 
         elif (position == 'STAFF') and (wants_accomodation == 'Y'):
             print('Sorry there are no living spaces available for staff')
@@ -70,19 +70,34 @@ class Dojo(object):
             new_fellow = Fellow(name)
             self.staff_and_fellows[new_fellow] = position
             # Allocate the fellow a random room
-            allocate_random_room(self.dojo_offices,office, Office().max_people)        
+            allocate_random_room(self.dojo_offices,office, Office.max_people)        
 
         else:
             # Adds fellow to the system
             new_fellow = Fellow(name)
             self.staff_and_fellows[new_fellow] = position
             # Allocate the fellow a random room
-            allocate_random_room(self.dojo_offices,office, Office().max_people)
-            allocate_random_room(self.dojo_livingspaces,livingspace, LivingSpace().max_people)
+            allocate_random_room(self.dojo_offices,office, Office.max_people)
+            allocate_random_room(self.dojo_livingspaces,livingspace, LivingSpace.max_people)
 
 
     def print_name(self, name):
-        pass
+        def print_out(which_dictionary):                
+                # print the key as header
+                print(name)
+                # print the decoration
+                print('__________________________________________________')
+                # print print the names in the list seperated by a comma
+                for names in which_dictionary[name]:
+                    print(names, end=', ')
+        # check if name is in offices
+        if name in self.dojo_offices:
+            print_out(self.dojo_offices)
+        elif name in self.dojo_livingspaces:
+            print_out(self.dojo_livingspaces)
+        else:
+            print('Sorry the rrom does not exist')
+
 
 
 
