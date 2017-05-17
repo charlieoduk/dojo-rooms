@@ -14,6 +14,7 @@ class Dojo(object):
         self.dojo_offices = {}
         self.dojo_livingspaces = {}
         self.staff_and_fellows = {}
+        self.unallocated = []
 
         
 
@@ -90,7 +91,11 @@ class Dojo(object):
             # Allocate the fellow a random room
             self.allocate_random_office(name)
             if (wants_accomodation == 'Y'):
-                self.allocate_random_livingspace(name)
+                try:
+                    self.allocate_random_livingspace(name)
+                except:
+                    self.unallocated.append(name)
+                    print('There are no rooms available {} added to the unallocated list'.format(name))
 
       
     def print_name(self, name):        
@@ -134,28 +139,33 @@ class Dojo(object):
 
 
 
-    def print_allocations(self):
+    def print_allocations(self,filename):
+        
+        if filename == None:
 
-        print('_____________OFFICE ALLOCATION_______________\n')
-        self.rooms_allocation(self.dojo_offices)
-        print('_____________LIVING SPACE ALLOCATION_________\n')
-        self.rooms_allocation(self.dojo_livingspaces)
+            print('_____________OFFICE ALLOCATION_______________\n')
+            self.rooms_allocation(self.dojo_offices)
+            print('_____________LIVING SPACE ALLOCATION_________\n')
+            self.rooms_allocation(self.dojo_livingspaces)
 
-        # else:
+        else:
+            orig_stdout = sys.stdout
+            saveFile = open(filename, 'w')
+            sys.stdout = saveFile
 
-        #     orig_stdout = sys.stdout
-        #     saveFile = open('Print_allocations.txt', 'w')
-        #     sys.stdout = saveFile
 
-
-        #     print('_____________OFFICE ALLOCATION_______________')
-        #     self.rooms_allocation(dojo_offices)
-        #     print('_____________LIVING SPACE ALLOCATION_________')
-        #     self.rooms_allocation(dojo_livingspaces)
+            print('_____________OFFICE ALLOCATION_______________\n')
+            self.rooms_allocation(self.dojo_offices)
+            print('_____________LIVING SPACE ALLOCATION_________\n')
+            self.rooms_allocation(self.dojo_livingspaces)
             
 
-        #     sys.stdout = orig_stdout
-        #     saveFile.close()
+            sys.stdout = orig_stdout
+            saveFile.close()
+
+    def print_unallocated(self,filename)
+
+        
 
         
 
