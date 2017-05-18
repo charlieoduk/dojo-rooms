@@ -51,16 +51,6 @@ def docopt_cmd(func):
     fn.__dict__.update(func.__dict__)
     return fn
 
-    click.echo('\n')
-    click.echo()
-    click.echo('*' + ' ' * 98 + '*')
-    click.echo('*' + ' ' * 98 + '*')
-    click.echo('*' + ' ' * 40 + 'THE WEATHER MAN!! ' + ' ' * 40+ '*')
-    click.echo('*' + ' ' * 98 + '*')
-    click.echo('*' + ' ' * 98 + '*')
-    click.echo('*' * 100)
-    click.echo('\n')
-
 
 class MyInteractive (cmd.Cmd):
     intro = ''
