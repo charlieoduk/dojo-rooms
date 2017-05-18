@@ -11,12 +11,12 @@ Usage:
 Options:
     -i, --interactive  Interactive Mode
     -h, --help  Show this screen and exit.
-    --baud=<n>  Baudrate [default: 9600]
+    
 """
 import sys
 import cmd
 from docopt import docopt, DocoptExit
-from dojo import Dojo 
+from dojo import Dojo
 
 dojo = Dojo()
 
@@ -26,6 +26,7 @@ def docopt_cmd(func):
     This decorator is used to simplify the try/except block and pass the result
     of the docopt parsing to the called action.
     """
+
     def fn(self, arg):
         try:
             opt = docopt(fn.__doc__, arg)
@@ -54,7 +55,7 @@ def docopt_cmd(func):
 
 class MyInteractive (cmd.Cmd):
     intro = ''
-        
+
     prompt = ' Dojo '
     file = None
 
@@ -64,54 +65,41 @@ class MyInteractive (cmd.Cmd):
         room_type = args["<room_type>"]
         room_names = args["<room_name>"]
 
-     
         for name in room_names:
-            result = dojo.create_room(room_type.upper(),name.upper())
-        
+            result = dojo.create_room(room_type.upper(), name.upper())
 
     @docopt_cmd
     def do_add_person(self, args):
         """Usage: add_person <person_name> <job_type> [--a=<wants_accommodation>]"""
+
         person_name = args["<person_name>"]
         person_name = person_name.upper()
         job_type = args["<job_type>"]
-        job_type = job_type.lower()
-        accomodation = (args["--a"])
-        wants_accommodation = ''
-        position = ''
-        
-        if job_type == 'fellow':
-            position = 'FELLOW'
-        elif job_type == 'staff':
-            position = 'STAFF'
-        else:
-            print('Please enter staff or fellow for the job_type field')
-            return
+        job_type = job_type.upper()
+        accomodation = args["--a"]
 
         if accomodation == None:
-            wants_accommodation = 'N'
-
-        elif accomodation == 'n' or 'N':
-            wants_accommodation ='N'
-
-        elif accomodation == 'y' or 'Y':
-            wants_accommodation = 'Y'
+            wants_accommodation = None
+        elif (accomodation == 'y') or (accomodation == 'n'):
+            wants_accommodation = accomodation.upper()
         else:
-            print('Please enter either N or Y for wants_accomodation field')
-            return
-        
+            print(
+                'Please enter --a=y(for yes) or --a=n(for no) in the wants accomodation field')
 
-        result = dojo.add_person(person_name, position,wants_accommodation)
+        if (job_type == 'FELLOW') or (job_type == 'STAFF'):
 
+            result = dojo.add_person(
+                person_name, job_type, wants_accommodation)
+
+        else:
+            print('Please enter either fellow or staff for the job_type field field')
 
     @docopt_cmd
     def do_print_room(self, args):
         """Usage: print_room <room_name>"""
-        room_name = (args ["<room_name>"]).upper()
+        room_name = (args["<room_name>"]).upper()
 
         result = dojo.print_name(room_name)
-
-
 
     @docopt_cmd
     def do_print_allocations(self, args):
@@ -119,7 +107,6 @@ class MyInteractive (cmd.Cmd):
         filename = args["<filename>"]
 
         dojo.print_allocations(filename)
-        
 
     @docopt_cmd
     def do_print_unallocated(self, args):
@@ -127,8 +114,6 @@ class MyInteractive (cmd.Cmd):
         filename = args["<filename>"]
 
         dojo.print_unallocated(filename)
-
-
 
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
@@ -144,6 +129,3 @@ if opt['--interactive']:
     MyInteractive().cmdloop()
 
 print(opt)
-
-
-
