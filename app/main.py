@@ -3,7 +3,7 @@ This example uses docopt with the built in cmd module to demonstrate an
 interactive command application.
 Usage:
     dojo-rooms create_room <room_type> <room_name>...
-    dojo-rooms add_person <person_name> <job_type> [--a=<wants_accommodation>] 
+    dojo-rooms add_person <first_name><last_name> <job_type> [--a=<wants_accommodation>] 
     dojo-rooms print_allocations [<filename>]
     dojo-rooms print_room <room_name>
     dojo-rooms (-i | --interactive)
@@ -70,9 +70,9 @@ class MyInteractive (cmd.Cmd):
 
     @docopt_cmd
     def do_add_person(self, args):
-        """Usage: add_person <person_name> <job_type> [--a=<wants_accommodation>]"""
+        """Usage: add_person <first_name> <last_name> <job_type> [--a=<wants_accommodation>]"""
 
-        person_name = args["<person_name>"]
+        person_name = arg['<first_name>'] + ' ' + arg['<last_name>']
         person_name = person_name.upper()
         job_type = args["<job_type>"]
         job_type = job_type.upper()
