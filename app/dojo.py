@@ -88,20 +88,20 @@ class Dojo(object):
             self.staff_and_fellows[name] = position
             # allocate staff a random room
             self.allocate_random_office(name)
-            return new_staff
+            
             if (wants_accomodation == 'Y'):
                 print('Sorry there are no living spaces available for staff')
-                return 'Sorry there are no living spaces available for staff'
+            return new_staff
 
         else:
             # Adds fellow to the system
             new_fellow = Fellow(name)
             self.staff_and_fellows[name] = position
             # Allocate the fellow a random room
-            self.allocate_random_office(name)
-            return new_fellow
+            self.allocate_random_office(name)            
             if (wants_accomodation == 'Y'):
                 self.allocate_random_livingspace(name)
+            return new_fellow
 
     # A function that prints out a decorator and the members of a room
     def print_out(self, room_to_iterate_through, name):

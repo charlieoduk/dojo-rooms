@@ -105,4 +105,4 @@ class TestAddPerson(unittest.TestCase):
         initial_person_in_living_space_count = len(self.the_dojo.dojo_livingspaces['RED'])
         new_fellow = self.the_dojo.add_person('MUNA', 'FELLOW', 'Y')
         new_person_in_livingspace_count = len(self.the_dojo.dojo_livingspaces['RED'])
-        self.assertEqual((new_person_in_livingspace_count-initial_person_in_living_space_count),0)
+        self.assertEqual((new_person_in_livingspace_count-initial_person_in_living_space_count),1)

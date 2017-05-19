@@ -58,6 +58,7 @@ class MyInteractive (cmd.Cmd):
 
     prompt = ' Dojo '
     file = None
+    print(__doc__)
 
     @docopt_cmd
     def do_create_room(self, args):
@@ -71,28 +72,32 @@ class MyInteractive (cmd.Cmd):
     @docopt_cmd
     def do_add_person(self, args):
         """Usage: add_person <first_name> <last_name> <job_type> [--a=<wants_accommodation>]"""
+        try:
 
-        person_name = arg['<first_name>'] + ' ' + arg['<last_name>']
-        person_name = person_name.upper()
-        job_type = args["<job_type>"]
-        job_type = job_type.upper()
-        accomodation = args["--a"]
+            person_name = args['<first_name>'] + ' ' + args['<last_name>']
+            person_name = person_name.upper()
+            job_type = args["<job_type>"]
+            job_type = job_type.upper()
+            accomodation = args["--a"]
 
-        if accomodation == None:
-            wants_accommodation = None
-        elif (accomodation == 'y') or (accomodation == 'n'):
-            wants_accommodation = accomodation.upper()
-        else:
-            print(
-                'Please enter --a=y(for yes) or --a=n(for no) in the wants accomodation field')
+            if accomodation == None:
+                wants_accommodation = None
+            elif (accomodation == 'y') or (accomodation == 'n'):
+                wants_accommodation = accomodation.upper()
+            else:
+                print(
+                    'Please enter --a=y(for yes) or --a=n(for no) in the wants accomodation field')
 
-        if (job_type == 'FELLOW') or (job_type == 'STAFF'):
+            if (job_type == 'FELLOW') or (job_type == 'STAFF'):
 
-            result = dojo.add_person(
-                person_name, job_type, wants_accommodation)
+                result = dojo.add_person(
+                    person_name, job_type, wants_accommodation)
 
-        else:
-            print('Please enter either fellow or staff for the job_type field field')
+            else:
+                print('Please enter either fellow or staff for the job_type field field')
+        except:
+            print('Please enter the details in this order <first_name> <last_name>' 
+                ' wants_accomodation(--a=y(for yes) or --a=n(for no))')
 
     @docopt_cmd
     def do_print_room(self, args):
