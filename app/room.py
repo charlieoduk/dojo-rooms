@@ -1,5 +1,5 @@
 class Room(object):
 
-    def __init__(self, name):
+    def __init__(self):
         self.number_of_people = 0
         self.occupants = []
