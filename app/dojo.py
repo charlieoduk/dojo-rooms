@@ -1,6 +1,5 @@
 import random
 import sys
-from collections import defaultdict
 from office import Office
 from livingspace import LivingSpace
 from fellow import Fellow
@@ -26,17 +25,20 @@ class Dojo(object):
                     new_office = Office(room_name)
                     self.dojo_offices[room_name] = []
                     print('A new office called {} has been created'.format(room_name))
+                    return new_office
                 else:
                     print('The room {} already exists'.format(room_name))
+
 
             # if room is living space
             elif room_type == 'LIVINGSPACE':
                 # check if room already exists
-                if room_type not in self.dojo_livingspaces:
+                if room_name not in self.dojo_livingspaces:
                     new_livingspace = LivingSpace(room_name)
-                    self.dojo_livingspaces[new_livingspace] = []
+                    self.dojo_livingspaces[room_name] = []
                     print(
                         'A new living space called {} has been created'.format(room_name))
+                    return new_livingspace
                 else:
                     print('The room {} already exists'.format(room_name))
             # else
@@ -86,8 +88,10 @@ class Dojo(object):
             self.staff_and_fellows[name] = position
             # allocate staff a random room
             self.allocate_random_office(name)
+            return new_staff
             if (wants_accomodation == 'Y'):
                 print('Sorry there are no living spaces available for staff')
+                return 'Sorry there are no living spaces available for staff'
 
         else:
             # Adds fellow to the system
@@ -95,6 +99,7 @@ class Dojo(object):
             self.staff_and_fellows[name] = position
             # Allocate the fellow a random room
             self.allocate_random_office(name)
+            return new_fellow
             if (wants_accomodation == 'Y'):
                 self.allocate_random_livingspace(name)
 
@@ -168,11 +173,10 @@ class Dojo(object):
             print(
                 '____________________________UNALLOCATED LIST_____________________________')
             print('\n')
-            if (len(self.unallocated)) == 0:
-                for name in (self.unallocated):
+    
+            for name in (self.unallocated):
                     print name
-            else:
-                print('This list is currently empty')
+           
         else:
             orig_stdout = sys.stdout
             saveFile = open(filename, 'w')
@@ -181,11 +185,10 @@ class Dojo(object):
             print(
                 '____________________________UNALLOCATED LIST_____________________________')
             print('\n')
-            if len(self.unallocated) == 0:
-                for name in (self.unallocated):
+            
+            for name in (self.unallocated):
                     print name
-            else:
-                print('This list is currently empty')
+           
 
             sys.stdout = orig_stdout
             saveFile.close()
