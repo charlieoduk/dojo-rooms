@@ -16,6 +16,7 @@ class Dojo(object):
         self.staff_and_fellows = {}
         self.unallocated = []
 
+
     def create_room(self, room_type, room_name):
         if type(room_name) == str:
             if room_type == 'OFFICE':
@@ -57,6 +58,7 @@ class Dojo(object):
                 self.dojo_offices[random_room].append(name)
                 print('{} has been allocated the office {}'.format(
                     name, random_room))
+                self.staff_and_fellows[name] = random_room
             else:
                 self.allocate_random_office(name)
         except:
@@ -71,6 +73,7 @@ class Dojo(object):
                 self.dojo_livingspaces[random_room].append(name)
                 print('{} has been allocated the living space {}'.format(
                     name, random_room))
+                self.staff_and_fellows[name] = random_room
             else:
                 self.allocate_random_room(name)
         except:
@@ -85,7 +88,7 @@ class Dojo(object):
         if (position == 'STAFF'):
             # adds a person to the system
             new_staff = Staff(name)
-            self.staff_and_fellows[name] = position
+            
             # allocate staff a random room
             self.allocate_random_office(name)
             
@@ -192,3 +195,22 @@ class Dojo(object):
 
             sys.stdout = orig_stdout
             saveFile.close()
+
+    def get_unique_id(self,name):
+        '''
+        method generates the unique id which helps the user to reallocate using the id
+        '''
+        if name in self.staff_and_fellows:
+
+            room = self.staff_and_fellows[name]
+            try:
+                name_index = self.dojo_livingspaces[room].index(name)
+                unique_id = id(room[name_index])
+                print('The unique ID for {} is {}'.format(name,unique_id))
+            except:
+                name_index = self.dojo_offices[room].index(name)
+                unique_id = id(room[name_index])
+                print('The unique ID for {} is {}'.format(name,unique_id))
+
+        else:
+            print('That name doesn\'t exist. Please add the personn first')
