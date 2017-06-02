@@ -50,47 +50,33 @@ class Dojo(object):
         else:
             print('Please enter a valid room name')
 
-    # A function that allocates a person to a random office
-    def allocate_random_office(self, name):
+    '''A method that allocates a person to a random office or livingspace'''
+    def allocate_random(self, name, room_type, dictionary_type):
         try:
-            random_room = random.choice(list(self.dojo_offices))
-            if (len(self.dojo_offices[random_room])) < Office.max_people:
-                self.dojo_offices[random_room].append(name)
-                print('{} has been allocated the office {}'.format(
-                    name, random_room))
+            random_room = random.choice(list(dictionary_type))
+            if (len(dictionary_type[random_room])) < Office.max_people:
+                dictionary_type[random_room].append(name)
+                print('{} has been allocated the {} {}'.format(
+                    name,room_type, random_room))
                 self.staff_and_fellows[name] = random_room
             else:
-                self.allocate_random_office(name)
+                allocate_random(self, name, room_type, dictionary_type)
         except:
             self.unallocated.append(name)
             print('There is no room available at the moment. {} has been addedto the unallocated list'.format(name))
 
-    # A function that allocates a person to a random office
-    def allocate_random_livingspace(self, name):
-        try:
-            random_room = random.choice(list(self.dojo_livingspaces))
-            if (len(self.dojo_livingspaces[random_room])) < LivingSpace.max_people:
-                self.dojo_livingspaces[random_room].append(name)
-                print('{} has been allocated the living space {}'.format(
-                    name, random_room))
-                self.staff_and_fellows[name] = random_room
-            else:
-                self.allocate_random_room(name)
-        except:
-            self.unallocated.append(name)
-            print('There is no room available at the moment. {} has been addedto the unallocated list'.format(name))
 
     def add_person(self, name, position, wants_accomodation):
         office = 'office'
         livingspace = 'Living space'
-        # A function that allocates a random room
+        '''A method that allocates a random room'''
 
         if (position == 'STAFF'):
             # adds a person to the system
             new_staff = Staff(name)
             
             # allocate staff a random room
-            self.allocate_random_office(name)
+            self.allocate_random(name,office,self.dojo_offices)
             
             if (wants_accomodation == 'Y'):
                 print('Sorry there are no living spaces available for staff')
@@ -101,9 +87,9 @@ class Dojo(object):
             new_fellow = Fellow(name)
             self.staff_and_fellows[name] = position
             # Allocate the fellow a random room
-            self.allocate_random_office(name)            
+            self.allocate_random(name,office,self.dojo_offices)            
             if (wants_accomodation == 'Y'):
-                self.allocate_random_livingspace(name)
+                self.allocate_random(name,livingspace,self.dojo_livingspaces)
             return new_fellow
 
     # A function that prints out a decorator and the members of a room
@@ -119,9 +105,9 @@ class Dojo(object):
         print('\n')
 
     def print_name(self, name):
-        # print the key as header
+        '''print the key as header'''
         print("\n " + name)
-        # check if name is in offices
+        '''check if name is in offices'''
         if name in self.dojo_offices:
             self.print_out(self.dojo_offices, name)
 
@@ -132,12 +118,12 @@ class Dojo(object):
             print('Sorry the room does not exist')
 
     def rooms_allocation(self, type_of_room):
-        # get a list of all the keys
+        '''get a list of all the keys'''
 
         print_allocations_list = []
         for key, value in type_of_room.iteritems():
             print_allocations_list.append(key)
-        # for every key iterate through and print out allocations
+        '''for every key iterate through and print out allocations'''
         for i in range(len(print_allocations_list)):
             print('\n')
             print(print_allocations_list[i])
@@ -170,8 +156,8 @@ class Dojo(object):
             saveFile.close()
 
     def print_unallocated(self, filename):
-        # iterate through the list and print out the names
-        # if the user doest request a print out
+        '''iterate through the list and print out the names
+         if the user doest request a print out'''
         if filename == None:
             print(
                 '____________________________UNALLOCATED LIST_____________________________')
@@ -211,6 +197,14 @@ class Dojo(object):
                 name_index = self.dojo_offices[room].index(name)
                 unique_id = id(room[name_index])
                 print('The unique ID for {} is {}'.format(name,unique_id))
-
+            
         else:
-            print('That name doesn\'t exist. Please add the personn first')
+            print('That name doesn\'t exist. Please add the person first')
+
+
+    def reallocate_person(self,person_id, new_room):
+        person_id = int(person_id)
+        for k,v in self.dojo_offices.iteritems():
+            for i in v:
+                print(i)
+                print(id(i))

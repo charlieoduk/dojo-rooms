@@ -7,6 +7,7 @@ Usage:
     dojo-rooms print_allocations [<filename>]
     dojo-rooms print_room <room_name>
     dojo-rooms get_id <first_name> <last_name>
+    dojo-rooms reallocate_person <person_identifier> <new_room_name>
     dojo-rooms (-i | --interactive)
     dojo-rooms (-h | --help | --version)
 Options:
@@ -124,10 +125,18 @@ class MyInteractive (cmd.Cmd):
     @docopt_cmd
     def do_get_id(self, args):
         """Usage: get_id <first_name> <last_name>"""
-        person_name = args['<first_name>'] + ' ' + args['<last_name>']
-        person_name = person_name.upper()
+        person_name = (args['<first_name>'] + ' ' + args['<last_name>']).upper()
 
         result = dojo.get_unique_id(person_name)
+
+    @docopt_cmd
+    def do_reallocate_person(self, args):
+        """Usage: reallocate_person <person_identifier> <new_room_name>"""
+        person_identifier = args['<person_identifier>']
+        new_room_name = args['<new_room_name>']
+    
+        dojo.reallocate_person(person_identifier,new_room_name)
+
 
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
