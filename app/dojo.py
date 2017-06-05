@@ -130,7 +130,7 @@ class Dojo(object):
 
             print('____________________________________________________\n')
             for names in type_of_room[print_allocations_list[i]]:
-                print names,
+                print names+ ' ID:' +str(id(names)),
             print('\n')
 
     def print_allocations(self, filename):
@@ -182,29 +182,7 @@ class Dojo(object):
             sys.stdout = orig_stdout
             saveFile.close()
 
-    def get_unique_id(self,name):
-        '''
-        method generates the unique id which helps the user to reallocate using the id
-        '''
-        if name in self.staff_and_fellows:
-
-            room = self.staff_and_fellows[name]
-            try:
-                name_index = self.dojo_livingspaces[room].index(name)
-                unique_id = id(room[name_index])
-                print('The unique ID for {} is {}'.format(name,unique_id))
-            except:
-                name_index = self.dojo_offices[room].index(name)
-                unique_id = id(room[name_index])
-                print('The unique ID for {} is {}'.format(name,unique_id))
-            
-        else:
-            print('That name doesn\'t exist. Please add the person first')
 
 
     def reallocate_person(self,person_id, new_room):
-        person_id = int(person_id)
-        for k,v in self.dojo_offices.iteritems():
-            for i in v:
-                print(i)
-                print(id(i))
+        pass
