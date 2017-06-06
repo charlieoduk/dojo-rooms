@@ -184,12 +184,13 @@ class Dojo(object):
 
     
     
-    def allocate_specific_room(self,new_room,name):
+    def allocate_specific_room(self,new_room,name,old_room):
         try:
             self.dojo_offices[new_room]
             if len(self.dojo_offices[new_room]) < Office.max_people:
                 self.dojo_offices[new_room].append(name)
                 print(name+' has been moved to the office '+ new_room)
+                old_room.remove(name)
             else:
                 print('Sorry that room is already full')
                 return
@@ -205,7 +206,8 @@ class Dojo(object):
         for i in range(len(available_rooms)):
             for name in self.dojo_offices[available_rooms[i]]:
                 if id(name) == person_id:
-                    self.allocate_specific_room(new_room,name)
-                    self.dojo_offices[available_rooms[i]].remove(name)
+                    old_room = self.dojo_offices[available_rooms[i]]
+                    self.allocate_specific_room(new_room,name,old_room)
+                    
                     
                     
