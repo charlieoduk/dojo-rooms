@@ -132,7 +132,7 @@ class MyInteractive (cmd.Cmd):
     @docopt_cmd
     def do_reallocate_person(self, args):
         """Usage: reallocate_person <person_identifier> <new_room_name>"""
-        person_identifier = args['<person_identifier>']
+        person_identifier = int(args['<person_identifier>'])
         new_room_name = args['<new_room_name>']
     
         dojo.reallocate_person(person_identifier,new_room_name)
