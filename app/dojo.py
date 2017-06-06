@@ -63,7 +63,7 @@ class Dojo(object):
                 allocate_random(self, name, room_type, dictionary_type)
         except:
             self.unallocated.append(name)
-            print('There is no room available at the moment. {} has been addedto the unallocated list'.format(name))
+            print('There is no room available at the moment. {} has been added to the unallocated list'.format(name))
 
 
     def add_person(self, name, position, wants_accomodation):
@@ -182,7 +182,30 @@ class Dojo(object):
             sys.stdout = orig_stdout
             saveFile.close()
 
+    
+    
+    def allocate_specific_room(self,new_room,name):
+        try:
+            self.dojo_offices[new_room]
+            if len(self.dojo_offices[new_room]) < Office.max_people:
+                self.dojo_offices[new_room].append(name)
+                print(name+' has been moved to the office '+ new_room)
+            else:
+                print('Sorry that room is already full')
+                return
+        except:
+            print('Sorry that room does not exist. Please create the room first')
+            return
 
 
     def reallocate_person(self,person_id, new_room):
-        pass
+        available_rooms = []
+        for key, value in self.dojo_offices.iteritems():
+            available_rooms.append(key)
+        for i in range(len(available_rooms)):
+            for name in self.dojo_offices[available_rooms[i]]:
+                if id(name) == person_id:
+                    self.allocate_specific_room(new_room,name)
+                    self.dojo_offices[available_rooms[i]].remove(name)
+                    
+                    
