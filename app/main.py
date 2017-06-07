@@ -6,7 +6,7 @@ Usage:
     dojo-rooms add_person <first_name><last_name> <job_type> [--a=<wants_accommodation>] 
     dojo-rooms print_allocations [<filename>]
     dojo-rooms print_room <room_name>
-    dojo-rooms get_id <first_name> <last_name>
+    dojo-rooms load_people <filename>
     dojo-rooms reallocate_person <person_identifier> <new_room_name>
     dojo-rooms (-i | --interactive)
     dojo-rooms (-h | --help | --version)
@@ -122,26 +122,31 @@ class MyInteractive (cmd.Cmd):
 
         dojo.print_unallocated(filename)
 
-    @docopt_cmd
-    def do_get_id(self, args):
-        """Usage: get_id <first_name> <last_name>"""
-        person_name = (args['<first_name>'] + ' ' + args['<last_name>']).upper()
-
-        result = dojo.get_unique_id(person_name)
+    
 
     @docopt_cmd
     def do_reallocate_person(self, args):
         """Usage: reallocate_person <person_identifier> <new_room_name>"""
         person_identifier = int(args['<person_identifier>'])
-        new_room_name = args['<new_room_name>']
+        new_room_name = (args['<new_room_name>']).upper()
     
         dojo.reallocate_person(person_identifier,new_room_name)
+
+    @docopt_cmd
+    def do_load_people(self, args):
+        """Usage: load_people <filename>"""
+        filename = args["<filename>"]
+        print(filename)
+
+        dojo.load_people(filename)
+
 
 
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
-
-        print('Good Bye!')
+        print('\n\n')
+        print('THIS IS ANDELA!!!')
+        print('\n\n')
         exit()
 
 opt = docopt(__doc__, sys.argv[1:])
