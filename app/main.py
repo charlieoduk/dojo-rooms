@@ -1,13 +1,14 @@
 """
-This example uses docopt with the built in cmd module to demonstrate an
-interactive command application.
+
 Usage:
     dojo-rooms create_room <room_type> <room_name>...
     dojo-rooms add_person <first_name><last_name> <job_type> [--a=<wants_accommodation>] 
     dojo-rooms print_allocations [<filename>]
     dojo-rooms print_room <room_name>
     dojo-rooms load_people <filename>
-    dojo-rooms reallocate_person <person_identifier> <new_room_name>
+    dojo-rooms reallocate_person <person_identifier> <room_type> <new_room_name>
+    dojo-rooms save_state
+    dojo-rooms load_state
     dojo-rooms (-i | --interactive)
     dojo-rooms (-h | --help | --version)
 Options:
@@ -17,6 +18,7 @@ Options:
 """
 import sys
 import cmd
+from pyfiglet import Figlet
 from docopt import docopt, DocoptExit
 from dojo import Dojo
 
@@ -56,7 +58,8 @@ def docopt_cmd(func):
 
 
 class MyInteractive (cmd.Cmd):
-    intro = ''
+    f = Figlet(font='univers')
+    intro = f.renderText('    D O J O')
 
     prompt = ' Dojo '
     file = None
@@ -106,7 +109,7 @@ class MyInteractive (cmd.Cmd):
         """Usage: print_room <room_name>"""
         room_name = (args["<room_name>"]).upper()
 
-        result = dojo.print_name(room_name)
+        result = dojo.print_room(room_name)
 
     @docopt_cmd
     def do_print_allocations(self, args):
@@ -114,6 +117,16 @@ class MyInteractive (cmd.Cmd):
         filename = args["<filename>"]
 
         dojo.print_allocations(filename)
+
+    @docopt_cmd
+    def do_save_state(self, args):
+        '''Usage: save_state'''
+        dojo.save_state()
+
+    @docopt_cmd
+    def do_load_state(self, args):
+        '''Usage: load_state'''
+        dojo.load_state()
 
     @docopt_cmd
     def do_print_unallocated(self, args):
@@ -126,11 +139,12 @@ class MyInteractive (cmd.Cmd):
 
     @docopt_cmd
     def do_reallocate_person(self, args):
-        """Usage: reallocate_person <person_identifier> <new_room_name>"""
+        """Usage: reallocate_person <person_identifier> <room_type> <new_room_name>"""
         person_identifier = int(args['<person_identifier>'])
         new_room_name = (args['<new_room_name>']).upper()
+        room_type = (args["<room_type>"]).upper()
     
-        dojo.reallocate_person(person_identifier,new_room_name)
+        dojo.reallocate_person(person_identifier,new_room_name,room_type)
 
     @docopt_cmd
     def do_load_people(self, args):
@@ -144,8 +158,9 @@ class MyInteractive (cmd.Cmd):
 
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
+       
         print('\n\n')
-        print('THIS IS ANDELA!!!')
+        print('THIS IS ANDELA')
         print('\n\n')
         exit()
 
