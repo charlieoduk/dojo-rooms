@@ -106,3 +106,23 @@ class TestAddPerson(unittest.TestCase):
         new_fellow = self.the_dojo.add_person('MUNA', 'FELLOW', 'Y')
         new_person_in_livingspace_count = len(self.the_dojo.dojo_livingspaces['RED'])
         self.assertEqual((new_person_in_livingspace_count-initial_person_in_living_space_count),1)
+
+class TestPrintRoom(unittest.TestCase):
+    def setUp(self):
+        self.the_dojo = Dojo()
+
+    # check output when room is empty
+    def test_check_output_when_room_is_empty(self):
+        room = self.the_dojo.create_room('OFFICE', 'RED')
+        result = self.the_dojo.print_room('RED')
+        
+        self.assertEqual(result, 'THIS ROOM IS CURRENTLY EMPTY')
+
+    # check output when the room does not exist
+    def test_check_output_when_no_room_exists(self):
+        pass
+
+    # check that people are added on the printed room
+
+
+
