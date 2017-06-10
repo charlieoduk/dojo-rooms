@@ -1,4 +1,4 @@
-from app.room import Room
+from room import Room
 
 class LivingSpace(Room):
     max_people = 4
