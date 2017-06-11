@@ -22,6 +22,35 @@ class Rooms(Base):
         self.spacesleft = spacesleft
         self.roomoccupants = roomoccupants
 
+class People(Base):
+    
+    __tablename__ = "Dojo People"
+    id = Column(Integer,primary_key=True)
+    name = Column(String)
+    position = Column(String)
+    room = Column(String)
+    room_type = Column(String)
+
+    def __init__(self, name, position, room, room_type):
+        self.name = name
+        self.position = position
+        self.room = room
+        self.room_type = room_type
+
+class Unallocated(object):
+
+    __tablename__ = "Dojo Unallocated"
+    id = Column(Integer,primary_key=True)
+    name = Column(String)
+    position = Column(String)
+
+    def __init__(self, name, position):
+        self.name = name
+        self.position = position
+        
+
+        
+
 
 
 

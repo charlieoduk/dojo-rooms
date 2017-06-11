@@ -18,7 +18,7 @@ class Dojo(object):
         self.dojo_offices = {}
         self.dojo_livingspaces = {}
         self.staff_and_fellows = {}
-        self.unallocated = []
+        self.unallocated = {}
 
     def create_room(self, room_type, room_name):
         if type(room_name) == str:
@@ -47,8 +47,7 @@ class Dojo(object):
                     self.dojo_livingspaces[room_name] = []
                     print('\n\n')
                     print(
-                        '\x1b[6;30;42m' + 'A new living space called {} has been created\
-                        '.format(room_name) + '\x1b[0m')
+                        '\x1b[6;30;42m' + 'A new living space called {} has been created'.format(room_name) + '\x1b[0m')
                     print('\n\n')
                     return new_livingspace
                 else:
@@ -61,8 +60,7 @@ class Dojo(object):
                 # invalid room
                 print('\n\n')
                 print(
-                    '\x1b[6;30;41m' + 'You have entered an invalid room. Please enter office or \
-                    Livingspace' + '\x1b[0m')
+                    '\x1b[6;30;41m' + 'You have entered an invalid room. Please enter office or Livingspace' + '\x1b[0m')
                 print('\n\n')
         else:
             print('\n\n')
@@ -77,9 +75,10 @@ class Dojo(object):
             random_room = random.choice(list(dictionary_type))
             if (len(dictionary_type[random_room])) < living_or_office.max_people:
                 dictionary_type[random_room].append(name)
+                ID = str(id(name))
                 print('\n\n')
-                print('\x1b[6;30;42m' + '{} has been allocated the {} {}'.format(
-                    name, room_type, random_room) + '\x1b[0m')
+                print('\x1b[6;30;42m' + '{}(ID:{}) has been allocated the {} {}'.format(
+                    name,ID, room_type, random_room) + '\x1b[0m')
                 print('\n\n')
                 self.staff_and_fellows[name] = [
                     random_room, position, room_type]
@@ -87,10 +86,9 @@ class Dojo(object):
                 allocate_random(self, name, room_type,
                                 dictionary_type, position, living_or_office)
         except:
-            self.unallocated.append(name)
+            self.unallocated[name] = position
             print('\n\n')
-            print('\x1b[6;30;47m' + 'There is no {} available at the moment. {} has \
-                been added to the unallocated list'.format(
+            print('\x1b[6;30;47m' + 'There is no {} available at the moment. {} has been added to the unallocated list'.format(
                 room_type, name) + '\x1b[0m')
             print('\n\n')
 
@@ -138,7 +136,7 @@ class Dojo(object):
             return ('THIS ROOM IS CURRENTLY EMPTY')
         # print print the names in the list seperated by a comma
         for names in self.dojo_offices[name]:
-            print(' '+names)
+            print(' '+names+' ID: '+str(id(names)))
         print('\n')
 
     def print_room(self, name):
@@ -207,8 +205,8 @@ class Dojo(object):
             print(*('*'*10), sep='-'*9)
             print('\n')
 
-            for name in (self.unallocated):
-                print(name)
+            for key, value in self.unallocated.items():
+                print(key+' :'+value)
             print('\n\n')
 
         else:
@@ -219,8 +217,8 @@ class Dojo(object):
             print(*('*'*10), sep='-'*9)
             print('\n')
 
-            for name in (self.unallocated):
-                print(name)
+            for key, value in self.unallocated.items():
+                print(key+' :'+value)
 
             sys.stdout = orig_stdout
             saveFile.close()
@@ -244,8 +242,7 @@ class Dojo(object):
         except:
             print('\n\n')
             print(
-                '\x1b[6;30;41m' + 'Sorry the room does not exist. \
-                Please create the room first' + '\x1b[0m')
+                '\x1b[6;30;41m' + 'Sorry the room does not exist. Please create the room first' + '\x1b[0m')
             print('\n\n')
 
     def reallocate_person(self, person_id, new_room, room_type):
@@ -308,6 +305,28 @@ class Dojo(object):
         
         save_state_of_office_or_livingspace(self.dojo_offices, Office, 'OFFICE')
         save_state_of_office_or_livingspace(self.dojo_livingspaces, LivingSpace, 'LIVING SPACE')
+
+
+        names = []
+        for key, value in self.staff_and_fellows.items():
+            names.append(key)
+        for i in range(len(names)):
+            name = names[i]
+            position = self.staff_and_fellows[names[i]][1]
+            room = self.staff_and_fellows[names[i]][0]
+            room_type = staff_and_fellows[names[i]][2]
+
+            people = People(name,position,room,room_type)
+            session.add(people)
+            session.commit()
+
+        
+        for key,value in self.unallocated.items():
+            unallocated = Unallocated(key,value)
+            session.add(unallocated)
+            session.commit()
+
+
 
         Base.metadata.create_all(engine)
 
