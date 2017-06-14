@@ -78,7 +78,7 @@ class Dojo(object):
                 ID = str(id(name))
                 print('\n\n')
                 print('\x1b[6;30;42m' + '{}(ID:{}) has been allocated the {} {}'.format(
-                    name,ID, room_type, random_room) + '\x1b[0m')
+                    name.name, ID, room_type, random_room) + '\x1b[0m')
                 print('\n\n')
                 self.staff_and_fellows[name] = [
                     random_room, position, room_type]
@@ -86,11 +86,19 @@ class Dojo(object):
                 allocate_random(self, name, room_type,
                                 dictionary_type, position, living_or_office)
         except:
-            self.unallocated[name] = position
-            print('\n\n')
-            print('\x1b[6;30;47m' + 'There is no {} available at the moment. {} has been added to the unallocated list'.format(
-                room_type, name) + '\x1b[0m')
-            print('\n\n')
+            if name not in self.unallocated:
+                self.unallocated[name] = []
+                self.unallocated[name].append(position)
+                requirement = 'Needs '+room_type
+                self.unallocated[name].append(requirement)
+                print('\n\n')
+                print('\x1b[6;30;47m' + 'There is no room available at the moment. {}(ID:({})has been added to the unallocated list'.format(
+                     name.name, id(name)) + '\x1b[0m')
+                print('\n\n')
+            else:
+                requirement = 'Needs '+room_type
+                self.unallocated[name].append(requirement)
+
 
     def add_person(self, name, position, wants_accomodation):
         office = 'office'
@@ -100,7 +108,7 @@ class Dojo(object):
         if (position == 'STAFF'):
             # adds a person to the system
             new_staff = Staff(name)
-
+            name = new_staff
             # allocate staff a random room
             self.allocate_random(
                 name, office, self.dojo_offices, Office, position)
@@ -115,7 +123,7 @@ class Dojo(object):
         else:
             # Adds fellow to the system
             new_fellow = Fellow(name)
-            self.staff_and_fellows[name] = position
+            name = new_fellow
             # Allocate the fellow a random room
             self.allocate_random(
                 name, office, self.dojo_offices, LivingSpace, position)
@@ -133,10 +141,10 @@ class Dojo(object):
         if len(self.dojo_offices[name]) == 0:
             print('THIS ROOM IS CURRENTLY EMPTY')
             print('\n\n')
-            return ('THIS ROOM IS CURRENTLY EMPTY')
+            return 'THIS ROOM IS CURRENTLY EMPTY'
         # print print the names in the list seperated by a comma
         for names in self.dojo_offices[name]:
-            print(' '+names+' ID: '+str(id(names)))
+            print(' '+names.name+' ID: '+str(id(names)))
         print('\n')
 
     def print_room(self, name):
@@ -168,7 +176,7 @@ class Dojo(object):
 
             print(('_'*50))
             for names in type_of_room[print_allocations_list[i]]:
-                print(names + ' ID:' + str(id(names)))
+                print(names.name + ' ID:' + str(id(names)))
             print('\n')
 
     def print_allocations(self, filename):
@@ -204,10 +212,12 @@ class Dojo(object):
             print('\x1b[1;31m'+'UNALLOCATED LIST'+'\x1b[0m')
             print(*('*'*10), sep='-'*9)
             print('\n')
-
+            people = []
             for key, value in self.unallocated.items():
-                print(key+' :'+value)
-            print('\n\n')
+                people.append(key)
+            for i in range(len(people)):
+                result = ('   '.join(self.unallocated[people[i]])).upper()
+                print(people[i].name+'(ID:{}) '.format(id(people[i]))+result)
 
         else:
             orig_stdout = sys.stdout
@@ -222,6 +232,34 @@ class Dojo(object):
 
             sys.stdout = orig_stdout
             saveFile.close()
+    def allocate_office_or_living_space(self,room_dicitonary,room_type,room_to_allocate,person_need,person_id):
+        # try:
+        #     room_dicitonary[room_to_allocate]
+        if len(room_dicitonary[room_to_allocate]) < room_type.max_people:
+            person_to_remove = []
+            for key in self.unallocated.keys():
+                if person_id == id(key):
+                    if len(self.unallocated[key]) > 2:
+                        self.unallocated[key].remove(person_need)
+                    else:
+                        person_to_remove.append(key)
+                    room_dicitonary[room_to_allocate].append(key)
+                else:
+                    print('Could not find anyone with that ID in the unallocated list. Please try again')
+            if len(person_to_remove) > 0:
+                self.unallocated.pop(person_to_remove[0])
+        else:
+            print('Sorry that room is already full. Please try another room')
+        # except:
+        #     print('Sorry that room doesn\'t exist. Please try another room')
+
+    def allocate_office(self, person_id, room_to_allocate):
+        room_dicitonary = self.dojo_offices
+        self.allocate_office_or_living_space(room_dicitonary,Office,room_to_allocate,'Needs office',person_id)
+        
+    def allocate_livingspace(self, person_id, room_to_allocate):
+        self.allocate_office_or_living_space(self.dojo_livingspaces,LivingSpace,room_to_allocate,'Needs Living space',person_id)
+
 
     def allocate_specific_room(self, new_room, name, old_room, room_type, office):
         try:
@@ -229,10 +267,11 @@ class Dojo(object):
             if len(room_type[new_room]) < office.max_people:
                 room_type[new_room].append(name)
                 print('\n\n')
-                print('\x1b[6;30;42m' + name +
+                print('\x1b[6;30;42m' + name.name +
                       ' has been moved to '+new_room + '\x1b[0m')
                 print('\n\n')
                 old_room.remove(name)
+
             else:
                 print('\n\n')
                 print('\x1b[6;30;41m' +
@@ -287,63 +326,101 @@ class Dojo(object):
     def save_state(self):
 
         engine = create_engine('sqlite:///offices.db', echo=False)
+        Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         session = Session()
-        def save_state_of_office_or_livingspace(office_or_livingspace, Off_or_Ls, roomType):
-            rooms_available = []
-            for key, values in office_or_livingspace.items():
-                rooms_available.append(key)
-            for i in range(len(rooms_available)):
-                room_name = rooms_available[i]
-                spaces_left = (Off_or_Ls.max_people - (len(office_or_livingspace[rooms_available[i]])))
-                room_type = roomType
-                room_occupants = '   '.join(office_or_livingspace[rooms_available[i]])
-                
-                room = Rooms(room_name,room_type,spaces_left,room_occupants)
+        def save_state_of_office_or_livingspace(office_or_livingspace, room_type):
+            for key, value in office_or_livingspace.items():
+                room_name = key
+                room = Rooms(room_name, room_type)
+                print(room_name+' '+room_type)
                 session.add(room)
                 session.commit()
+
+        save_state_of_office_or_livingspace(self.dojo_offices, 'OFFICE')
+        save_state_of_office_or_livingspace(
+            self.dojo_livingspaces, 'LIVING SPACE')
+
+        def save_state_of_assigned_people(office_or_livingspace,room_type):
+            rooms = []
+            for key, value in office_or_livingspace.items():
+                rooms.append(key)
+            for i in range(len(rooms)):
+                room_list = office_or_livingspace[rooms[i]]
+                length_of_room = len(office_or_livingspace[rooms[i]])
+                for j in range(length_of_room):
+                    name = room_list[j].name
+                    position = room_list[j].position
+                    room = rooms[i]
+                    room_type = room_type
+                    print(name+' '+position+' '+room+' '+room_type)
+                    people = People(name, position, room, room_type)
+                    session.add(people)
+                    session.commit()
+
+        save_state_of_assigned_people(self.dojo_offices, 'OFFICE')
+        save_state_of_assigned_people(self.dojo_livingspaces, 'LIVING SPACE')
+
+
+        def save_state_of_unallocated():
+            unallocated_people = []
+            for key, value in self.unallocated.items():
+                unallocated_people.append(key)
+            for i in range(len(unallocated_people)):
+                name = unallocated_people[i].name
+                position = self.unallocated[unallocated_people[i]][0]
+                
+
+                if len(self.unallocated[unallocated_people[i]]) > 2:
+                    need1 = self.unallocated[unallocated_people[i]][1]
+                    need2 = self.unallocated[unallocated_people[i]][2]
+                    print(name+' '+position+' '+need1+' '+need2)
+                    unallocated = Unallocated(name,position,need1,need2)
+                    session.add(unallocated)
+                    session.commit()
+                else:
+                    need1 = self.unallocated[unallocated_people[i]][1]
+                    print(name+' '+position+' '+need1)
+                    unallocated = Unallocated(name,position,need1,'No need')
+                    session.add(unallocated)
+                    session.commit()
+
+              
+        save_state_of_unallocated()
+
+
+
+
+      
+
         
-        save_state_of_office_or_livingspace(self.dojo_offices, Office, 'OFFICE')
-        save_state_of_office_or_livingspace(self.dojo_livingspaces, LivingSpace, 'LIVING SPACE')
-
-
-        names = []
-        for key, value in self.staff_and_fellows.items():
-            names.append(key)
-        for i in range(len(names)):
-            name = names[i]
-            position = self.staff_and_fellows[names[i]][1]
-            room = self.staff_and_fellows[names[i]][0]
-            room_type = staff_and_fellows[names[i]][2]
-
-            people = People(name,position,room,room_type)
-            session.add(people)
-            session.commit()
-
-        
-        for key,value in self.unallocated.items():
-            unallocated = Unallocated(key,value)
-            session.add(unallocated)
-            session.commit()
-
-
-
-        Base.metadata.create_all(engine)
 
     def load_state(self):
         engine = create_engine('sqlite:///offices.db', echo=False)
-         
+        # Base.metadata.create_all(engine)
         # create a Session
         Session = sessionmaker(bind=engine)
         session = Session()
 
-        # Create objects  
-        for room in session.query(Rooms).order_by(Rooms.id):
-            print('\n\n')
-            print (room.roomname, room.roomtype)
-            print('\n\n')
+        # Create objects
+        def load_rooms_and_people(type_of_room):
 
+            for room in session.query(Rooms).order_by(Rooms.id):
+                if room.roomtype == 'OFFICE':
+                    room_dictionary = self.dojo_offices
+                else:
+                    room_dictionary = self.dojo_livingspaces
+                room_dictionary[room.roomname] = []
+                for person in session.query(People).order_by(People.id):
+                    if person.room == room.roomname:
+                        if person.position == 'STAFF':
+                            person = Staff(person.name)
+                            room_dictionary[room.roomname].append(person)
+                        else:
+                            person = Fellow(person.name)
+                            room_dictionary[room.roomname].append(person)
+
+        load_rooms_and_people('OFFICE')
+        load_rooms_and_people('LIVING SPACE')
 
         Base.metadata.create_all(engine)
-
-

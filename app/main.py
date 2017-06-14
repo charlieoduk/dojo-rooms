@@ -1,3 +1,4 @@
+
 """
 
 Usage:
@@ -7,6 +8,8 @@ Usage:
     dojo-rooms print_room <room_name>
     dojo-rooms load_people <filename>
     dojo-rooms reallocate_person <person_identifier> <room_type> <new_room_name>
+    dojo-rooms allocate_office <person_identifier> <room_to_allocate>
+    dojo-rooms allocate_livingspace <person_identifier> <room_to_allocate>
     dojo-rooms save_state
     dojo-rooms load_state
     dojo-rooms (-i | --interactive)
@@ -63,7 +66,7 @@ class MyInteractive (cmd.Cmd):
 
     prompt = ' Dojo '
     file = None
-    print(__doc__)
+    
 
     @docopt_cmd
     def do_create_room(self, args):
@@ -72,7 +75,12 @@ class MyInteractive (cmd.Cmd):
         room_names = args["<room_name>"]
 
         for name in room_names:
-            result = dojo.create_room(room_type.upper(), name.upper())
+            if name.isalpha():
+                result = dojo.create_room(room_type.upper(), name.upper())
+            else:
+                print('\n\n')
+                print('The room {} could not be created. Please enter only alphabetic characters'.format(name))
+                print('\n\n')
 
     @docopt_cmd
     def do_add_person(self, args):
@@ -94,9 +102,13 @@ class MyInteractive (cmd.Cmd):
                     'Please enter --a=y(for yes) or --a=n(for no) in the wants accomodation field')
 
             if (job_type == 'FELLOW') or (job_type == 'STAFF'):
-
+                # if person_name.isalpha():
                 result = dojo.add_person(
                     person_name, job_type, wants_accommodation)
+                # else:
+                #     print('\n\n')
+                #     print('{} Could not be added. Please ensure the name is alphabetic'.format(person_name))
+                #     print('\n\n')
 
             else:
                 print('Please enter either fellow or staff for the job_type field field')
@@ -147,6 +159,23 @@ class MyInteractive (cmd.Cmd):
         dojo.reallocate_person(person_identifier,new_room_name,room_type)
 
     @docopt_cmd
+    def do_allocate_office(self, args):
+        """Usage: allocate_office <person_identifier> <room_to_allocate>"""
+        person_identifier = int(args['<person_identifier>'])
+        room_to_allocate = (args['<room_to_allocate>']).upper()
+
+        dojo.allocate_office(person_identifier, room_to_allocate)
+
+    @docopt_cmd
+    def do_allocate_livingspace(self, args):
+        """Usage: allocate_livingspace <person_identifier> <room_to_allocate>"""
+        person_identifier = int(args['<person_identifier>'])
+        room_to_allocate = (args['<room_to_allocate>']).upper()
+
+        dojo.allocate_livingspace(person_identifier, room_to_allocate)
+
+
+    @docopt_cmd
     def do_load_people(self, args):
         """Usage: load_people <filename>"""
         filename = args["<filename>"]
@@ -167,8 +196,7 @@ class MyInteractive (cmd.Cmd):
 opt = docopt(__doc__, sys.argv[1:])
 
 if opt['--interactive']:
-    # os.system("clear")
-    # intro()
+    print(__doc__)
     MyInteractive().cmdloop()
 
 print(opt)

@@ -13,18 +13,17 @@ class Rooms(Base):
     id = Column(Integer, primary_key=True)
     roomname = Column(String)
     roomtype = Column(String)
-    spacesleft = Column(Integer)
-    roomoccupants = Column(String)
+   
 
-    def __init__(self, roomname, roomtype, spacesleft, roomoccupants):
+    def __init__(self, roomname, roomtype):
         self.roomname = roomname
         self.roomtype = roomtype
-        self.spacesleft = spacesleft
-        self.roomoccupants = roomoccupants
+    
 
 class People(Base):
     
     __tablename__ = "Dojo People"
+
     id = Column(Integer,primary_key=True)
     name = Column(String)
     position = Column(String)
@@ -37,16 +36,21 @@ class People(Base):
         self.room = room
         self.room_type = room_type
 
-class Unallocated(object):
+class Unallocated(Base):
 
     __tablename__ = "Dojo Unallocated"
+
     id = Column(Integer,primary_key=True)
     name = Column(String)
     position = Column(String)
+    need_one = Column(String)
+    need_two = Column(String)
 
-    def __init__(self, name, position):
+    def __init__(self, name, position, need_one, need_two):
         self.name = name
         self.position = position
+        self.need_one = need_one
+        self.need_two = need_two
         
 
         

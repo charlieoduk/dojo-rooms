@@ -1,4 +1,8 @@
 import unittest
+
+import sys
+import csv
+
 from app.dojo import Dojo
 from app.room import Room
 from app.office import Office
@@ -113,14 +117,16 @@ class TestPrintRoom(unittest.TestCase):
 
     # check output when room is empty
     def test_check_output_when_room_is_empty(self):
-        room = self.the_dojo.create_room('OFFICE', 'RED')
+        self.the_dojo.create_room('OFFICE', 'RED')
+        print(self.)
         result = self.the_dojo.print_room('RED')
-        
-        self.assertEqual(result, 'THIS ROOM IS CURRENTLY EMPTY')
+        self.assertIn(str(result), 'THIS ROOM IS CURRENTLY EMPTY')
 
     # check output when the room does not exist
     def test_check_output_when_no_room_exists(self):
-        pass
+        result = self.the_dojo.print_room('BLUE')
+        print(result)
+        self.assertEqual(result, 'Sorry the room does not exist')
 
     # check that people are added on the printed room
 
