@@ -105,10 +105,7 @@ class MyInteractive (cmd.Cmd):
                 # if person_name.isalpha():
                 result = dojo.add_person(
                     person_name, job_type, wants_accommodation)
-                # else:
-                #     print('\n\n')
-                #     print('{} Could not be added. Please ensure the name is alphabetic'.format(person_name))
-                #     print('\n\n')
+               
 
             else:
                 print('Please enter either fellow or staff for the job_type field field')
