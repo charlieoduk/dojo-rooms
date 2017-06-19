@@ -4,11 +4,14 @@ import csv
 from termcolor import colored
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from ormMethods import *
-from office import Office
-from livingspace import LivingSpace
-from fellow import Fellow
-from staff import Staff
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from app.ormMethods import *
+from app.office import Office
+from app.livingspace import LivingSpace
+from app.fellow import Fellow
+from app.staff import Staff
 
 
 class Dojo(object):
@@ -47,13 +50,13 @@ class Dojo(object):
         if room_type == 'OFFICE':
             room_dictionary = self.dojo_offices
             room_type = room_type.lower()
-            self.room_creator_method(
+            return self.room_creator_method(
                 room_dictionary, room_type, Office, room_name)
 
         elif room_type == 'LIVINGSPACE':
             room_dictionary = self.dojo_livingspaces
             room_type = room_type.lower()
-            self.room_creator_method(
+            return self.room_creator_method(
                 room_dictionary, room_type, LivingSpace, room_name)
 
         else:
@@ -136,8 +139,10 @@ class Dojo(object):
         print('\x1b[1;31m'+name+'\x1b[0m')
         print(('_'*50))
         if len(room_dictionary[name]) == 0:
-            print('THIS ROOM IS CURRENTLY EMPTY')
+            string = 'THIS ROOM IS CURRENTLY EMPTY'
+            print(string)
             print('\n\n')
+            return string
 
         for names in room_dictionary[name]:
             print(' '+names.name+' ID: '+str(id(names)))
@@ -148,10 +153,10 @@ class Dojo(object):
         the room is printed.'''
         print('\n\n')
         if name in self.dojo_offices:
-            self.print_out(self.dojo_offices, name)
+            return self.print_out(self.dojo_offices, name)
 
         elif name in self.dojo_livingspaces:
-            self.print_out(self.dojo_livingspaces, name)
+            return self.print_out(self.dojo_livingspaces, name)
 
         else:
             print(colored(
@@ -160,7 +165,7 @@ class Dojo(object):
 
     def rooms_allocation(self, room_dictionary):
         '''A method that finds all the available rooms. The rooms including the members
-        are printed ouperson
+        are printed out
         '''
 
         available_rooms = []
