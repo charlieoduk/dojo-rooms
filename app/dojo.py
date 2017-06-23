@@ -1,14 +1,14 @@
 import random
 import sys
 import csv
-import termcolor
+
 from termcolor import colored
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os.path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from app.ormMethods import *
+from ormMethods import *
 from app.office import Office
 from app.livingspace import LivingSpace
 from app.fellow import Fellow
@@ -66,6 +66,7 @@ class Dojo(object):
                 'You have entered an invalid room. Please'
                 ' enter office or Livingspace', 'red'))
             print('\n\n')
+            return 'You have entered an invalid room. Please enter office or Livingspace'
 
     def allocate_random(self, name, room_type, room_dictionary, living_or_office_object, position):
         '''This method checks for all the rooms that have some space then allocates an office or 
@@ -121,6 +122,7 @@ class Dojo(object):
                 print(
                     colored('Sorry there are no living spaces available for staff', 'red'))
                 print('\n\n')
+                return 'Sorry there are no living spaces available for staff'
             return new_staff
 
         else:
@@ -162,6 +164,7 @@ class Dojo(object):
         else:
             print(colored(
                   'Sorry the room does not exist', 'red'))
+            return 'Sorry the room does not exist'
         print('\n\n')
 
     def rooms_allocation(self, room_dictionary):
@@ -181,65 +184,89 @@ class Dojo(object):
             for names in room_dictionary[available_rooms[i]]:
                 print(names.name + ' ID:' + str(id(names)))
             print('\n')
+        return available_rooms
 
     def print_allocations(self, filename):
         '''A method that prints out all the available rooms as well as the people
         in them. If the user enters a file-name then the list of rooms is printed out to a .txt file.
         If the filename is not specified the rooms are displayed on the command line'''
-        if filename == None:
-            print('\n\n')
-            print('\x1b[1;31m'+'OFFICE ALLOCATION'+'\x1b[0m')
-            print(*('*'*10), sep='-'*9)
-            self.rooms_allocation(self.dojo_offices)
-            print('\x1b[1;31m'+'LIVING SPACE ALLOCATION'+'\x1b[0m')
-            print(*('*'*10), sep='-'*9)
-            self.rooms_allocation(self.dojo_livingspaces)
-            print('\n\n')
+        if (len(self.dojo_offices) or len(self.dojo_livingspaces)) > 0:
+            if filename == None:
+                print('\n\n')
+                print('\x1b[1;31m'+'OFFICE ALLOCATION'+'\x1b[0m')
+                print(*('*'*10), sep='-'*9)
+                self.rooms_allocation(self.dojo_offices)
+                print('\x1b[1;31m'+'LIVING SPACE ALLOCATION'+'\x1b[0m')
+                print(*('*'*10), sep='-'*9)
+                self.rooms_allocation(self.dojo_livingspaces)
+                print('\n\n')
+                return 'Successfully printed to the screen'
 
+            else:
+                orig_stdout = sys.stdout
+                saveFile = open(filename, 'w')
+                sys.stdout = saveFile
+
+                print('\x1b[1;31m'+'OFFICE ALLOCATION'+'\x1b[0m')
+                self.rooms_allocation(self.dojo_offices)
+                print('\x1b[1;31m'+'LIVING SPACE ALLOCATION'+'\x1b[0m')
+                self.rooms_allocation(self.dojo_livingspaces)
+
+                sys.stdout = orig_stdout
+                saveFile.close()
+                return 'Successfully printed to a txt file'
         else:
-            orig_stdout = sys.stdout
-            saveFile = open(filename, 'w')
-            sys.stdout = saveFile
-
-            print('\x1b[1;31m'+'OFFICE ALLOCATION'+'\x1b[0m')
-            self.rooms_allocation(self.dojo_offices)
-            print('\x1b[1;31m'+'LIVING SPACE ALLOCATION'+'\x1b[0m')
-            self.rooms_allocation(self.dojo_livingspaces)
-
-            sys.stdout = orig_stdout
-            saveFile.close()
+            print('\n\n')
+            print(colored('There are currently no allocations', 'red'))
+            print('\n\n')
+            return 'There are currently no allocations'
 
     def print_unallocated(self, filename):
         '''A method that iterates through the unallocated dictionary. prints
         out the name of the people in the dictionary,their position(staff or fellow) and whether
         they need an office or a living space or both.
         '''
-        if filename == None:
-            print('\n\n')
-            print('\x1b[1;31m'+'UNALLOCATED LIST'+'\x1b[0m')
-            print(*('*'*10), sep='-'*9)
-            print('\n')
-            people = []
-            for key, value in self.unallocated.items():
-                people.append(key)
-            for person in range(len(people)):
-                result = ('   '.join(self.unallocated[people[person]])).upper()
-                print(people[i].name +
-                      '(ID:{}) '.format(id(people[person]))+result)
+        if len(self.unallocated) > 0:
+            if filename == None:
+                print('\n\n')
+                print('\x1b[1;31m'+'UNALLOCATED LIST'+'\x1b[0m')
+                print(*('*'*10), sep='-'*9)
+                print('\n')
+                people = []
+                for key, value in self.unallocated.items():
+                    people.append(key)
+                for person in range(len(people)):
+                    result = ('   '.join(self.unallocated[
+                              people[person]])).upper()
+                    print(people[person].name +
+                          '(ID:{}) '.format(id(people[person]))+result)
+                return 'Successfuly printed to the screen'
+            else:
+                orig_stdout = sys.stdout
+                saveFile = open(filename, 'w')
+                sys.stdout = saveFile
 
+                print(*('*'*10), sep='-'*9)
+                print('\n')
+
+                people = []
+                for key, value in self.unallocated.items():
+                    people.append(key)
+                for person in range(len(people)):
+                    result = ('   '.join(self.unallocated[
+                              people[person]])).upper()
+                    print(people[person].name +
+                          '(ID:{}) '.format(id(people[person]))+result)
+
+                sys.stdout = orig_stdout
+                saveFile.close()
+
+                return 'Successfully printed to a txt file'
         else:
-            orig_stdout = sys.stdout
-            saveFile = open(filename, 'w')
-            sys.stdout = saveFile
-
-            print(*('*'*10), sep='-'*9)
-            print('\n')
-
-            for key, value in self.unallocated.items():
-                print(key+' :'+value)
-
-            sys.stdout = orig_stdout
-            saveFile.close()
+            print('\n\n')
+            print(colored('There are no unallocated people', 'red'))
+            print('\n\n')
+            return 'There are no unallocated people'
 
     def allocate_office_or_living_space(self, room_dicitonary, living_or_office_object, room_to_allocate, person_need, person_id):
         '''A method that allocates a person in the unallocated dictionary to either an office or
@@ -279,20 +306,25 @@ class Dojo(object):
             if len(room_dicitonary[new_room]) < office.max_people:
                 room_dicitonary[new_room].append(name)
                 print('\n\n')
-                print(colored(name.name + ' has been moved to '+new_room, 'green'))
+                print_statement = name.name + ' has been moved to '+new_room
+                print(colored(print_statement, 'green'))
                 print('\n\n')
+                print(old_room)
                 old_room.remove(name)
+                return print_statement
 
             else:
                 print('\n\n')
-                print(colored('Sorry that room is already full', 'red'))
+                print_string = 'Sorry that room is already full'
+                print(colored(print_string, 'red'))
                 print('\n\n')
-
+                return print_string
         except:
             print('\n\n')
             print(
                 colored('Sorry the room does not exist. Please create the room first', 'red'))
             print('\n\n')
+            return 'Sorry the room does not exist. Please create the room first'
 
     def reallocate_person(self, person_id, new_room, room_type):
         '''A method that checks the type of room and then sets the arguments based on the room.
@@ -314,8 +346,16 @@ class Dojo(object):
                 for name in room_dicitonary[available_rooms[i]]:
                     if id(name) == person_id:
                         old_room = room_dicitonary[available_rooms[i]]
-                        self.allocate_specific_room(
-                            new_room, name, old_room, room_dicitonary, office)
+                        if available_rooms[i] == new_room:
+                            print('\n\n')
+                            print(
+                                colored('No changes made because you are trying to reallocate to the same room', 'red'))
+                            print('\n\n')
+                            return 'No changes made because you are trying to reallocate to the same room'
+                        else:
+                            return self.allocate_specific_room(new_room, name, old_room, room_dicitonary, office)
+                            
+
         except:
             print(
                 colored('Please enter either office or livingspace as the room type', 'red'))
@@ -377,29 +417,29 @@ class Dojo(object):
         save_state_of_assigned_people(self.dojo_offices, 'OFFICE')
         save_state_of_assigned_people(self.dojo_livingspaces, 'LIVING SPACE')
 
-        def save_state_of_unallocated():
-            unallocated_people = []
-            for key, value in self.unallocated.items():
-                unallocated_people.append(key)
-            for person in range(len(unallocated_people)):
-                name = unallocated_people[person].name
-                position = self.unallocated[unallocated_people[person]][0]
+        
+        unallocated_people = []
+        for key, value in self.unallocated.items():
+            unallocated_people.append(key)
+        for person in range(len(unallocated_people)):
+            name = unallocated_people[person].name
+            position = self.unallocated[unallocated_people[person]][0]
 
-                if len(self.unallocated[unallocated_people[person]]) > 2:
-                    need1 = self.unallocated[unallocated_people[person]][1]
-                    need2 = self.unallocated[unallocated_people[person]][2]
-                    unallocated = Unallocated(name, position, need1, need2)
-                    session.add(unallocated)
-                    session.commit()
-                else:
-                    need1 = self.unallocated[unallocated_people[person]][1]
-                    unallocated = Unallocated(name, position, need1, 'No need')
-                    session.add(unallocated)
-                    session.commit()
+            if len(self.unallocated[unallocated_people[person]]) > 2:
+                need1 = self.unallocated[unallocated_people[person]][1]
+                need2 = self.unallocated[unallocated_people[person]][2]
+                unallocated = Unallocated(name, position, need1, need2)
+                session.add(unallocated)
+                session.commit()
+            else:
+                need1 = self.unallocated[unallocated_people[person]][1]
+                unallocated = Unallocated(name, position, need1, 'No need')
+                session.add(unallocated)
+                session.commit()
 
-        save_state_of_unallocated()
         print(colored('Current state successfully saved!!', 'green'))
         print('\n\n')
+        return 'Current state successfully saved!!'
 
     def load_state(self):
         '''A method that loads a previously saved state(rooms and the unallocated people'''
@@ -468,5 +508,6 @@ class Dojo(object):
         print(
             colored('You have successfully loaded the previously saved state!!!', 'green'))
         print('\n\n')
+        return 'You have successfully loaded the previously saved state!!!'
 
         Base.metadata.create_all(engine)
