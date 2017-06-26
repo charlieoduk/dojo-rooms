@@ -6,6 +6,7 @@ Usage:
     dojo-rooms add_person <first_name><last_name> <job_type> [--a=<wants_accommodation>] 
     dojo-rooms print_allocations [<filename>]
     dojo-rooms print_room <room_name>
+    dojo-rooms print_unallocated [<filename>]
     dojo-rooms load_people <filename>
     dojo-rooms reallocate_person <person_identifier> <room_type> <new_room_name>
     dojo-rooms allocate_office <person_identifier> <room_to_allocate>
