@@ -2,7 +2,6 @@
 offices.db
 distribute_setup.py
 get-pip.py
-sample.txt
 testing
 venv
 *.pyc
