@@ -10,8 +10,8 @@ Usage:
     dojo-rooms reallocate_person <person_identifier> <room_type> <new_room_name>
     dojo-rooms allocate_office <person_identifier> <room_to_allocate>
     dojo-rooms allocate_livingspace <person_identifier> <room_to_allocate>
-    dojo-rooms save_state
-    dojo-rooms load_state
+    dojo-rooms save_state [--db=sqlite_database]
+    dojo-rooms load_state <sqlite_database>
     dojo-rooms (-i | --interactive)
     dojo-rooms (-h | --help | --version)
 Options:
@@ -129,13 +129,20 @@ class MyInteractive (cmd.Cmd):
 
     @docopt_cmd
     def do_save_state(self, args):
-        '''Usage: save_state'''
-        dojo.save_state()
+        '''Usage: save_state [--db=sqlite_database]'''
+        database = args["--db"]
+        if database == None:
+            database_name = None
+        else:
+            database_name = database
+
+        dojo.save_state(database_name)
 
     @docopt_cmd
     def do_load_state(self, args):
-        '''Usage: load_state'''
-        dojo.load_state()
+        '''Usage: load_state <sqlite_database>'''
+        database_name = args["<sqlite_database>"]
+        dojo.load_state(database_name)
 
     @docopt_cmd
     def do_print_unallocated(self, args):
@@ -184,11 +191,22 @@ class MyInteractive (cmd.Cmd):
 
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
-       
         print('\n\n')
-        print('THIS IS ANDELA')
+        response = (input('Would you like to save your current session before leaving? (Y/N) ')).upper()
         print('\n\n')
-        exit()
+        if response == 'Y':
+           print('Go ahead and save your session ')
+           print('\n\n')
+        elif response == 'N':
+            print('THIS IS ANDELA')
+            print('\n\n')
+            exit()
+        else:
+            print('Please type Y or N as your response')
+            self.do_quit(arg)
+
+
+        
 
 opt = docopt(__doc__, sys.argv[1:])
 
