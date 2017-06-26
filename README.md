@@ -104,16 +104,17 @@ SIMON PATTERSON FELLOW Y
 MARI LAWRENCE FELLOW Y
 LEIGH RILEY STAFF
 TANA LOPEZ FELLOW Y
-KELLY McGUIRE STAFF```
+KELLY McGUIRE STAFF
+```
 
 # Save State
 
-```USAGE: save_state [--db=sqlite_database]```
+`USAGE: save_state [--db=sqlite_database]`
 Persists all the data stored in the app to a SQLite database. Specifying the --db parameter explicitly stores the data in the sqlite_database specified. 
 
 # Load state
 
-```USAGE: load_state <sqlite_database> ```
+`USAGE: load_state <sqlite_database> `
 Loads data from a database into the application.
 
 
