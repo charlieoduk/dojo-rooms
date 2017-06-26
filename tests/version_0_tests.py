@@ -222,20 +222,20 @@ class TestDojo(unittest.TestCase):
         self.assertTrue((len(self.the_dojo.dojo_livingspaces['BLUE']) > 0))
 
     def test_load_state_succesfully_loaded_state_message(self):
-        result = self.the_dojo.load_state()
+        result = self.the_dojo.load_state('default.db')
         self.assertEqual(result, 'You have successfully loaded the previously saved state!!!')
 
 
 
     def test_load_state_previously_saved_state(self):
         number_of_offices = len(self.the_dojo.dojo_offices)
-        self.the_dojo.load_state()
+        self.the_dojo.load_state('default.db')
         new_number_of_offices = len(self.the_dojo.dojo_offices)
         self.assertTrue((new_number_of_offices - number_of_offices) > 0)
 
     def test_save_state_successful_message(self):
-        self.the_dojo.load_state
-        result = self.the_dojo.save_state()
+        self.the_dojo.load_state('default.db')
+        result = self.the_dojo.save_state(None)
         self.assertEqual(result, 'Current state successfully saved!!')
 
 
