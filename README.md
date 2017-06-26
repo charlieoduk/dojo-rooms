@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/charlieoduk/dojo-rooms.svg?branch=master)](https://travis-ci.org/charlieoduk/dojo-rooms)
+[![Coverage Status](https://coveralls.io/repos/github/charlieoduk/dojo-rooms/badge.svg)](https://coveralls.io/github/charlieoduk/dojo-rooms)
 # BOOTCAMP WEEK 2 PROJECT - DOJO-ROOMS
 
 # Introduction
