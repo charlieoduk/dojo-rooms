@@ -61,7 +61,7 @@ MEMBER 1, MEMBER 2, MEMBER 3
 ```
 # Print Allocations
 
-```USAGE: print_allocations [-o=filename]```
+```USAGE: print_allocations [<filename>]```
 Prints a list of allocations onto the screen. Specifying the optional -o option here outputs the registered allocations to a txt file
 ```ROOM NAME
 -------------------------------------
@@ -73,8 +73,50 @@ MEMBER 1, MEMBER 2
 ```
 
 # Print Unallocated
-```USAGE: print_unallocated [-o=filename]```
+
+```USAGE: print_unallocated [<filename>]```
 Prints a list of unallocated people to the screen. Specifying the -o option here outputs the information to the txt file provided.
+
+# Reallocate Person
+
+``` USAGE: reallocate_person <person_identifier> <room_type> <new_room_name>``` 
+Reallocate the person with person_identifier to new_room_name.
+
+# Allocate Office
+
+``` USAGE: allocate_office <person_identifier> <room_to_allocate>```
+Allocate a person from the unallocated list to an office
+
+# Allocate Living Space
+
+```USAGE: allocate_livingspace <person_identifier> <room_to_allocate>```
+Allocate a person from the unallocated list to a living space
+
+# Load People
+
+``` USAGE: load_people <filename>```
+Adds people to rooms from a txt file. Below is the text input format.
+
+OLUWAFEMI SULE FELLOW Y
+DOMINIC WALTERS STAFF
+SIMON PATTERSON FELLOW Y
+MARI LAWRENCE FELLOW Y
+LEIGH RILEY STAFF
+TANA LOPEZ FELLOW Y
+KELLY McGUIRE STAFF
+
+# Save State
+
+```USAGE: save_state [--db=sqlite_database]```
+Persists all the data stored in the app to a SQLite database. Specifying the --db parameter explicitly stores the data in the sqlite_database specified. 
+
+# Load state
+
+```USAGE: load_state <sqlite_database> ```
+Loads data from a database into the application.
+
+
+
 
 
 
