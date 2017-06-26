@@ -135,7 +135,7 @@ class TestDojo(unittest.TestCase):
 
     def test_allocate_office_for_unallocated_person(self):
         unallocated_person = Fellow('JOHN DOE')
-        self.the_dojo.unallocated[unallocated_person] = ['FELLOW','NEEDS OFFICE']
+        self.the_dojo.unallocated[unallocated_person] = ['FELLOW','Needs office']
         person_id = id(unallocated_person)
         self.the_dojo.create_room('OFFICE', 'RED')
         self.the_dojo.allocate_office(person_id, 'RED')
