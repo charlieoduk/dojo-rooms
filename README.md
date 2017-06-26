@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ea7cce59060e4de3a14b4edfce4c39f9)](https://www.codacy.com/app/charlieoduk/dojo-rooms?utm_source=github.com&utm_medium=referral&utm_content=charlieoduk/dojo-rooms&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/charlieoduk/dojo-rooms.svg?branch=master)](https://travis-ci.org/charlieoduk/dojo-rooms)
 [![Coverage Status](https://coveralls.io/repos/github/charlieoduk/dojo-rooms/badge.svg)](https://coveralls.io/github/charlieoduk/dojo-rooms)
 # BOOTCAMP WEEK 2 PROJECT - DOJO-ROOMS
