@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 import os.path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from ormMethods import *
+from Models import *
 from app.office import Office
 from app.livingspace import LivingSpace
 from app.fellow import Fellow
@@ -240,6 +240,7 @@ class Dojo(object):
                               people[person]])).upper()
                     print(people[person].name +
                           '(ID:{}) '.format(id(people[person]))+result)
+                print('\n\n')
                 return 'Successfuly printed to the screen'
             else:
                 orig_stdout = sys.stdout
@@ -257,7 +258,7 @@ class Dojo(object):
                               people[person]])).upper()
                     print(people[person].name +
                           '(ID:{}) '.format(id(people[person]))+result)
-
+                
                 sys.stdout = orig_stdout
                 saveFile.close()
 
@@ -378,72 +379,83 @@ class Dojo(object):
 
             self.add_person(name, position, wants_accomodation)
 
-    def save_state(self):
+    def save_state(self,database_name):
         '''A method that saves all the rooms and memebers in them. It also saves all the 
         people in the unallocated dictionary'''
+        if database_name == None:
+            os.remove('default.db')
+            database = 'default.db'
+        else:
+            database = database_name+'.db'
+        if os.path.isfile(database) and (database != 'default.db'):
+            print('\n\n')
+            print(colored('That file name already exists in the database. Please choose a different name ','red'))
+            print('\n\n')
+        else:
+            engine = create_engine('sqlite:///{}'.format(database), echo=False)
+            Base.metadata.create_all(engine)
+            Session = sessionmaker(bind=engine)
+            session = Session()
 
-        engine = create_engine('sqlite:///offices.db', echo=False)
-        Base.metadata.create_all(engine)
-        Session = sessionmaker(bind=engine)
-        session = Session()
+    
 
-        print('\n\n')
+            print('\n\n')
 
-        def save_state_of_office_or_livingspace(office_or_livingspace, room_type):
-            for key, value in office_or_livingspace.items():
-                room_name = key
-                room = Rooms(room_name, room_type)
-                session.add(room)
-                session.commit()
-
-        save_state_of_office_or_livingspace(self.dojo_offices, 'OFFICE')
-        save_state_of_office_or_livingspace(
-            self.dojo_livingspaces, 'LIVING SPACE')
-
-        def save_state_of_assigned_people(office_or_livingspace, room_type):
-            rooms = []
-            for key, value in office_or_livingspace.items():
-                rooms.append(key)
-
-            for room in rooms:
-                people_in_room_list = office_or_livingspace[room]
-                for person in range(len(people_in_room_list)):
-                    name = people_in_room_list[person].name
-                    position = people_in_room_list[person].position
-                    people = People(name, position, room, room_type)
-                    session.add(people)
+            def save_state_of_office_or_livingspace(office_or_livingspace, room_type):
+                for key, value in office_or_livingspace.items():
+                    room_name = key
+                    room = Rooms(room_name, room_type)
+                    session.add(room)
                     session.commit()
 
-        save_state_of_assigned_people(self.dojo_offices, 'OFFICE')
-        save_state_of_assigned_people(self.dojo_livingspaces, 'LIVING SPACE')
+            save_state_of_office_or_livingspace(self.dojo_offices, 'OFFICE')
+            save_state_of_office_or_livingspace(
+                self.dojo_livingspaces, 'LIVING SPACE')
 
-        
-        unallocated_people = []
-        for key, value in self.unallocated.items():
-            unallocated_people.append(key)
-        for person in range(len(unallocated_people)):
-            name = unallocated_people[person].name
-            position = self.unallocated[unallocated_people[person]][0]
+            def save_state_of_assigned_people(office_or_livingspace, room_type):
+                rooms = []
+                for key, value in office_or_livingspace.items():
+                    rooms.append(key)
 
-            if len(self.unallocated[unallocated_people[person]]) > 2:
-                need1 = self.unallocated[unallocated_people[person]][1]
-                need2 = self.unallocated[unallocated_people[person]][2]
-                unallocated = Unallocated(name, position, need1, need2)
-                session.add(unallocated)
-                session.commit()
-            else:
-                need1 = self.unallocated[unallocated_people[person]][1]
-                unallocated = Unallocated(name, position, need1, 'No need')
-                session.add(unallocated)
-                session.commit()
+                for room in rooms:
+                    people_in_room_list = office_or_livingspace[room]
+                    for person in range(len(people_in_room_list)):
+                        name = people_in_room_list[person].name
+                        position = people_in_room_list[person].position
+                        people = People(name, position, room, room_type)
+                        session.add(people)
+                        session.commit()
 
-        print(colored('Current state successfully saved!!', 'green'))
-        print('\n\n')
-        return 'Current state successfully saved!!'
+            save_state_of_assigned_people(self.dojo_offices, 'OFFICE')
+            save_state_of_assigned_people(self.dojo_livingspaces, 'LIVING SPACE')
 
-    def load_state(self):
+            
+            unallocated_people = []
+            for key, value in self.unallocated.items():
+                unallocated_people.append(key)
+            for person in range(len(unallocated_people)):
+                name = unallocated_people[person].name
+                position = self.unallocated[unallocated_people[person]][0]
+
+                if len(self.unallocated[unallocated_people[person]]) > 2:
+                    need1 = self.unallocated[unallocated_people[person]][1]
+                    need2 = self.unallocated[unallocated_people[person]][2]
+                    unallocated = Unallocated(name, position, need1, need2)
+                    session.add(unallocated)
+                    session.commit()
+                else:
+                    need1 = self.unallocated[unallocated_people[person]][1]
+                    unallocated = Unallocated(name, position, need1, 'No need')
+                    session.add(unallocated)
+                    session.commit()
+
+            print(colored('Current state successfully saved!!', 'green'))
+            print('\n\n')
+            return 'Current state successfully saved!!'
+
+    def load_state(self, database_name):
         '''A method that loads a previously saved state(rooms and the unallocated people'''
-        engine = create_engine('sqlite:///offices.db', echo=False)
+        engine = create_engine('sqlite:///{}'.format(database_name), echo=False)
         Session = sessionmaker(bind=engine)
         session = Session()
 
