@@ -97,13 +97,14 @@ Allocate a person from the unallocated list to a living space
 ``` USAGE: load_people <filename>```
 Adds people to rooms from a txt file. Below is the text input format.
 
+```
 OLUWAFEMI SULE FELLOW Y
 DOMINIC WALTERS STAFF
 SIMON PATTERSON FELLOW Y
 MARI LAWRENCE FELLOW Y
 LEIGH RILEY STAFF
 TANA LOPEZ FELLOW Y
-KELLY McGUIRE STAFF
+KELLY McGUIRE STAFF```
 
 # Save State
 
