@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/charlieoduk/dojo-rooms.svg?branch=master)](https://travis-ci.org/charlieoduk/dojo-rooms)
 # BOOTCAMP WEEK 2 PROJECT - DOJO-ROOMS
 
 # Introduction
