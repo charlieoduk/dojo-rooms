@@ -258,7 +258,7 @@ class Dojo(object):
                               people[person]])).upper()
                     print(people[person].name +
                           '(ID:{}) '.format(id(people[person]))+result)
-                
+
                 sys.stdout = orig_stdout
                 saveFile.close()
 
@@ -280,15 +280,16 @@ class Dojo(object):
                     person_to_remove.append(key)
                     if len(self.unallocated[key]) > 1:
                         self.unallocated[key].remove(person_need)
-    
+
                     room_dicitonary[room_to_allocate].append(key)
                     print('\n\n')
-                    print(colored('Successfully allocated '+key.name+' to '+room_to_allocate,'green'))
+                    print(colored('Successfully allocated ' +
+                                  key.name+' to '+room_to_allocate, 'green'))
                     print('\n\n')
             if len(person_to_remove) == 0:
                 print('\n\n')
                 print(colored(
-                        'Could not find anyone with that ID in the unallocated list. Please try again', 'red'))
+                    'Could not find anyone with that ID in the unallocated list. Please try again', 'red'))
                 print('\n\n')
             if (len(self.unallocated[person_to_remove[0]])) < 2:
                 self.unallocated.pop(person_to_remove[0])
@@ -362,7 +363,6 @@ class Dojo(object):
                             return 'No changes made because you are trying to reallocate to the same room'
                         else:
                             return self.allocate_specific_room(new_room, name, old_room, room_dicitonary, max_people)
-                            
 
         except:
             print(
@@ -386,7 +386,7 @@ class Dojo(object):
 
             self.add_person(name, position, wants_accomodation)
 
-    def save_state(self,database_name):
+    def save_state(self, database_name):
         '''A method that saves all the rooms and memebers in them. It also saves all the 
         people in the unallocated dictionary'''
         if database_name == None:
@@ -396,15 +396,14 @@ class Dojo(object):
             database = database_name+'.db'
         if os.path.isfile(database) and (database != 'default.db'):
             print('\n\n')
-            print(colored('That file name already exists in the database. Please choose a different name ','red'))
+            print(colored(
+                'That file name already exists in the database. Please choose a different name ', 'red'))
             print('\n\n')
         else:
             engine = create_engine('sqlite:///{}'.format(database), echo=False)
             Base.metadata.create_all(engine)
             Session = sessionmaker(bind=engine)
             session = Session()
-
-    
 
             print('\n\n')
 
@@ -434,9 +433,9 @@ class Dojo(object):
                         session.commit()
 
             save_state_of_assigned_people(self.dojo_offices, 'OFFICE')
-            save_state_of_assigned_people(self.dojo_livingspaces, 'LIVING SPACE')
+            save_state_of_assigned_people(
+                self.dojo_livingspaces, 'LIVING SPACE')
 
-            
             unallocated_people = []
             for key, value in self.unallocated.items():
                 unallocated_people.append(key)
@@ -463,7 +462,8 @@ class Dojo(object):
     def load_state(self, database_name):
         '''A method that loads a previously saved state(rooms and the unallocated people'''
         try:
-            engine = create_engine('sqlite:///{}'.format(database_name), echo=False)
+            engine = create_engine(
+                'sqlite:///{}'.format(database_name), echo=False)
             Session = sessionmaker(bind=engine)
             session = Session()
 
@@ -532,5 +532,6 @@ class Dojo(object):
 
             Base.metadata.create_all(engine)
         except:
-            print(colored('Please enter the database name in the format \'database.db\'','red'))
+            print(
+                colored('Please enter the database name in the format \'database.db\'', 'red'))
             print('\n\n')
