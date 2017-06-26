@@ -269,42 +269,49 @@ class Dojo(object):
             print('\n\n')
             return 'There are no unallocated people'
 
-    def allocate_office_or_living_space(self, room_dicitonary, living_or_office_object, room_to_allocate, person_need, person_id):
+    def allocate_office_or_living_space(self, room_dicitonary, max_people, room_to_allocate, person_need, person_id):
         '''A method that allocates a person in the unallocated dictionary to either an office or
         a living space that is specified by the user.'''
 
-        if len(room_dicitonary[room_to_allocate]) < living_or_office_object.max_people:
+        if len(room_dicitonary[room_to_allocate]) < max_people:
             person_to_remove = []
             for key in self.unallocated.keys():
                 if person_id == id(key):
-                    if len(self.unallocated[key]) > 2:
+                    person_to_remove.append(key)
+                    if len(self.unallocated[key]) > 1:
                         self.unallocated[key].remove(person_need)
-                    else:
-                        person_to_remove.append(key)
+    
                     room_dicitonary[room_to_allocate].append(key)
-                else:
-                    print(colored(
+                    print('\n\n')
+                    print(colored('Successfully allocated '+key.name+' to '+room_to_allocate,'green'))
+                    print('\n\n')
+            if len(person_to_remove) == 0:
+                print('\n\n')
+                print(colored(
                         'Could not find anyone with that ID in the unallocated list. Please try again', 'red'))
-            if len(person_to_remove) > 0:
+                print('\n\n')
+            if (len(self.unallocated[person_to_remove[0]])) < 2:
                 self.unallocated.pop(person_to_remove[0])
         else:
+            print('\n\n')
             print(
                 colored('Sorry that room is already full. Please try another room', 'red'))
+            print('\n\n')
 
     def allocate_office(self, person_id, room_to_allocate):
         room_dicitonary = self.dojo_offices
         self.allocate_office_or_living_space(
-            room_dicitonary, Office, room_to_allocate, 'Needs office', person_id)
+            room_dicitonary, Office.max_people, room_to_allocate, 'Needs office', person_id)
 
     def allocate_livingspace(self, person_id, room_to_allocate):
         self.allocate_office_or_living_space(
-            self.dojo_livingspaces, LivingSpace, room_to_allocate, 'Needs Living space', person_id)
+            self.dojo_livingspaces, LivingSpace.max_people, room_to_allocate, 'Needs Living space', person_id)
 
-    def allocate_specific_room(self, new_room, name, old_room, room_dicitonary, office):
+    def allocate_specific_room(self, new_room, name, old_room, room_dicitonary, max_people):
         '''A method that allocates a person to a specific room as specified by the user'''
         try:
             room_dicitonary[new_room]
-            if len(room_dicitonary[new_room]) < office.max_people:
+            if len(room_dicitonary[new_room]) < max_people:
                 room_dicitonary[new_room].append(name)
                 print('\n\n')
                 print_statement = name.name + ' has been moved to '+new_room
@@ -335,10 +342,10 @@ class Dojo(object):
         try:
             if room_type == 'OFFICE':
                 room_dicitonary = self.dojo_offices
-                office = Office
+                max_people = Office.max_people
             elif room_type == 'LIVINGSPACE':
                 room_dicitonary = self.dojo_livingspaces
-                office = LivingSpace
+                max_people = LivingSpace.max_people
 
             for key, value in room_dicitonary.items():
                 available_rooms.append(key)
@@ -354,7 +361,7 @@ class Dojo(object):
                             print('\n\n')
                             return 'No changes made because you are trying to reallocate to the same room'
                         else:
-                            return self.allocate_specific_room(new_room, name, old_room, room_dicitonary, office)
+                            return self.allocate_specific_room(new_room, name, old_room, room_dicitonary, max_people)
                             
 
         except:
@@ -455,71 +462,75 @@ class Dojo(object):
 
     def load_state(self, database_name):
         '''A method that loads a previously saved state(rooms and the unallocated people'''
-        engine = create_engine('sqlite:///{}'.format(database_name), echo=False)
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        try:
+            engine = create_engine('sqlite:///{}'.format(database_name), echo=False)
+            Session = sessionmaker(bind=engine)
+            session = Session()
 
-        print('\n\n')
-        def load_rooms_and_people_in_them():
-            for room in session.query(Rooms).order_by(Rooms.id):
-                if room.roomtype == 'OFFICE':
-                    room_dictionary = self.dojo_offices
-                else:
-                    room_dictionary = self.dojo_livingspaces
-                room_dictionary[room.roomname] = []
-                for person in session.query(People).order_by(People.id):
-                    if person.room == room.roomname:
-                        if person.position == 'STAFF':
-                            person = Staff(person.name)
-                            room_dictionary[room.roomname].append(person)
-                        else:
-                            person = Fellow(person.name)
-                            room_dictionary[room.roomname].append(person)
-
-        def load_unallocated_people():
-            for person in session.query(Unallocated).order_by(Unallocated.id):
-                name = person.name
-                position = person.position
-                need1 = person.need_one
-                need2 = person.need_two
-                if need2 == 'No need':
-                    if position == 'STAFF':
-                        name = Staff(name)
-                        self.unallocated[name] = [position, need1]
-                    else:
-                        name = Fellow(name)
-                        self.unallocated[name] = [position, need1]
-                else:
-                    if position == 'STAFF':
-                        name = Staff(name)
-                        self.unallocated[name] = [position, need1, need2]
-                    else:
-                        name = Fellow(name)
-                        self.unallocated[name] = [position, need1, need2]
-
-        if (len(self.dojo_offices) or len(self.dojo_livingspaces)) < 1:
-            load_rooms_and_people_in_them()
-            load_unallocated_people()
-        else:
-            response = (input(
-                'Please be advised that loading state will get rid of all your current allocations.'
-                ' Do you want to continue? (Y/N)  ')).upper()
             print('\n\n')
-            if response == 'Y':
-                self.dojo_offices.clear()
-                self.dojo_livingspaces.clear()
+            def load_rooms_and_people_in_them():
+                for room in session.query(Rooms).order_by(Rooms.id):
+                    if room.roomtype == 'OFFICE':
+                        room_dictionary = self.dojo_offices
+                    else:
+                        room_dictionary = self.dojo_livingspaces
+                    room_dictionary[room.roomname] = []
+                    for person in session.query(People).order_by(People.id):
+                        if person.room == room.roomname:
+                            if person.position == 'STAFF':
+                                person = Staff(person.name)
+                                room_dictionary[room.roomname].append(person)
+                            else:
+                                person = Fellow(person.name)
+                                room_dictionary[room.roomname].append(person)
+
+            def load_unallocated_people():
+                for person in session.query(Unallocated).order_by(Unallocated.id):
+                    name = person.name
+                    position = person.position
+                    need1 = person.need_one
+                    need2 = person.need_two
+                    if need2 == 'No need':
+                        if position == 'STAFF':
+                            name = Staff(name)
+                            self.unallocated[name] = [position, need1]
+                        else:
+                            name = Fellow(name)
+                            self.unallocated[name] = [position, need1]
+                    else:
+                        if position == 'STAFF':
+                            name = Staff(name)
+                            self.unallocated[name] = [position, need1, need2]
+                        else:
+                            name = Fellow(name)
+                            self.unallocated[name] = [position, need1, need2]
+
+            if (len(self.dojo_offices) or len(self.dojo_livingspaces)) < 1:
                 load_rooms_and_people_in_them()
                 load_unallocated_people()
-
-            elif response == 'N':
-                print('You may continue with your current session')
-
             else:
-                print('Please respond with either Y or N')
+                response = (input(
+                    'Please be advised that loading state will get rid of all your current allocations.'
+                    ' Do you want to continue? (Y/N)  ')).upper()
+                print('\n\n')
+                if response == 'Y':
+                    self.dojo_offices.clear()
+                    self.dojo_livingspaces.clear()
+                    load_rooms_and_people_in_them()
+                    load_unallocated_people()
 
-        print(
-            colored('You have successfully loaded the previously saved state!!!', 'green'))
-        print('\n\n')
-        return 'You have successfully loaded the previously saved state!!!'
+                elif response == 'N':
+                    print('You may continue with your current session')
 
-        Base.metadata.create_all(engine)
+                else:
+                    print('Please respond with either Y or N')
+
+            print(
+                colored('You have successfully loaded the previously saved state!!!', 'green'))
+            print('\n\n')
+            return 'You have successfully loaded the previously saved state!!!'
+
+            Base.metadata.create_all(engine)
+        except:
+            print(colored('Please enter the database name in the format \'database.db\'','red'))
+            print('\n\n')
