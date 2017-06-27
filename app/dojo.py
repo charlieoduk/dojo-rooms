@@ -74,7 +74,7 @@ class Dojo(object):
         This method is called by the add_person method'''
         try:
             rooms_with_space = []
-            for key, value in room_dictionary.items():
+            for key in room_dictionary.keys():
                 if len(room_dictionary[key]) < living_or_office_object.max_people:
                     rooms_with_space.append(key)
 
@@ -232,7 +232,7 @@ class Dojo(object):
                 print(*('*'*10), sep='-'*9)
                 print('\n')
                 people = []
-                for key, value in self.unallocated.items():
+                for key in self.unallocated.keys():
                     people.append(key)
                 for person in range(len(people)):
                     result = ('   '.join(self.unallocated[
@@ -347,7 +347,7 @@ class Dojo(object):
                 room_dicitonary = self.dojo_livingspaces
                 max_people = LivingSpace.max_people
 
-            for key, value in room_dicitonary.items():
+            for key in room_dicitonary.keys():
                 available_rooms.append(key)
 
             for i in range(len(available_rooms)):
@@ -407,7 +407,7 @@ class Dojo(object):
             print('\n\n')
 
             def save_state_of_office_or_livingspace(office_or_livingspace, room_type):
-                for key, value in office_or_livingspace.items():
+                for key in office_or_livingspace.keys():
                     room_name = key
                     room = Rooms(room_name, room_type)
                     session.add(room)

@@ -6,4 +6,4 @@ class Staff(Person):
     position = 'STAFF'
     def __init__(self, name):
         super(Staff, self).__init__(name)
-        self.name = name
+        
