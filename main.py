@@ -104,7 +104,7 @@ class MyInteractive (cmd.Cmd):
 
             if (job_type == 'FELLOW') or (job_type == 'STAFF'):
                 # if person_name.isalpha():
-                result = dojo.add_person(
+                dojo.add_person(
                     person_name, job_type, wants_accommodation)
                
 
@@ -119,7 +119,7 @@ class MyInteractive (cmd.Cmd):
         """Usage: print_room <room_name>"""
         room_name = (args["<room_name>"]).upper()
 
-        result = dojo.print_room(room_name)
+        dojo.print_room(room_name)
 
     @docopt_cmd
     def do_print_allocations(self, args):

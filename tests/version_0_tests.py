@@ -1,8 +1,5 @@
 import unittest
 
-import sys
-import csv
-
 from app.dojo import Dojo
 from app.room import Room
 from app.office import Office
@@ -42,7 +39,7 @@ class TestDojo(unittest.TestCase):
     # check if room is created
     def test_create_room_successfully(self):
         initial_office_count = len(self.the_dojo.dojo_offices)
-        kilimanjaro_office = self.the_dojo.create_room("OFFICE", "KILIMANJARO")
+        self.the_dojo.create_room("OFFICE", "KILIMANJARO")
         new_office_count = len(self.the_dojo.dojo_offices)
         self.assertEqual((new_office_count - initial_office_count), 1)
 
@@ -66,7 +63,7 @@ class TestDojo(unittest.TestCase):
     def test_create_room_with_same_name_as_another_room(self):
         self.the_dojo.dojo_offices['RED'] = []
         number_of_rooms = len(self.the_dojo.dojo_offices)
-        new_room = self.the_dojo.create_room('OFFICE', 'RED')
+        self.the_dojo.create_room('OFFICE', 'RED')
         new_number_of_rooms = len(self.the_dojo.dojo_offices)
         self.assertEqual(number_of_rooms, new_number_of_rooms)
 
@@ -86,17 +83,17 @@ class TestDojo(unittest.TestCase):
     # check if room is allocated
     def test_add_person_room_is_allocated_to_staff(self):
         
-        office = self.the_dojo.create_room('OFFICE', 'RED')
+        self.the_dojo.create_room('OFFICE', 'RED')
         initial_person_in_office_count = len(self.the_dojo.dojo_offices['RED'])
-        new_person = self.the_dojo.add_person('CHARLES', 'STAFF','N')
+        self.the_dojo.add_person('CHARLES', 'STAFF','N')
         new_person_in_office_count = len(self.the_dojo.dojo_offices['RED'])
         self.assertEqual((new_person_in_office_count - initial_person_in_office_count), 1)
 
     # check if adding accomodation for staff returns an error
     def test_add_person_adding_accomodation_for_staff(self):
-        livingspace = self.the_dojo.create_room('LIVINGSPACE', 'RED')
+        self.the_dojo.create_room('LIVINGSPACE', 'RED')
         initial_person_in_living_space_count = len(self.the_dojo.dojo_livingspaces['RED'])
-        new_staff_member = self.the_dojo.add_person('WANJIKU', 'STAFF', 'Y')
+        self.the_dojo.add_person('WANJIKU', 'STAFF', 'Y')
         new_person_in_livingspace_count = len(self.the_dojo.dojo_livingspaces['RED'])
         self.assertEqual((new_person_in_livingspace_count-initial_person_in_living_space_count),0)
 
@@ -121,7 +118,7 @@ class TestDojo(unittest.TestCase):
     # add fellow who wants accomodation. check if living space is allocated
     def test_add_person_if_living_space_is_allocated_for_fellow_who_wants_accommodation(self):
         livingspace = self.the_dojo.create_room('LIVINGSPACE', 'RED')
-        office = self.the_dojo.create_room('OFFICE', 'BLUE')
+        self.the_dojo.create_room('OFFICE', 'BLUE')
         initial_person_in_living_space_count = len(self.the_dojo.dojo_livingspaces['RED'])
         new_fellow = self.the_dojo.add_person('MUNA', 'FELLOW', 'Y')
         new_person_in_livingspace_count = len(self.the_dojo.dojo_livingspaces['RED'])
@@ -201,7 +198,7 @@ class TestDojo(unittest.TestCase):
         self.the_dojo.dojo_offices['RED'] = []
 
         person_id = id(new_person)
-        reallocate = self.the_dojo.reallocate_person(person_id, 'RED', 'OFFICE')
+        self.the_dojo.reallocate_person(person_id, 'RED', 'OFFICE')
 
     def test_reallocate_person_from_office_to_office(self):
         new_person = Staff('CHARLES ODUK')

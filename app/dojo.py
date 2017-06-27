@@ -45,8 +45,7 @@ class Dojo(object):
 
     def create_room(self, room_type, room_name):
         '''This method checks the type of room that the user wants to create. The parameters are set depending on
-        the type of the room. With the parameters set, it calls the method 'room_creator_method' to create 
-        the room'''
+        the type of the room. With the parameters set, it calls the method 'room_creator_method' to create the room'''
 
         if room_type == 'OFFICE':
             room_dictionary = self.dojo_offices

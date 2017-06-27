@@ -13,8 +13,6 @@ class Rooms(Base):
     id = Column(Integer, primary_key=True)
     roomname = Column(String)
     roomtype = Column(String)
-   
-
     def __init__(self, roomname, roomtype):
         self.roomname = roomname
         self.roomtype = roomtype
