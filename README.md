@@ -4,6 +4,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/charlieoduk/dojo-rooms/badge.svg)](https://coveralls.io/github/charlieoduk/dojo-rooms)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ea7cce59060e4de3a14b4edfce4c39f9)](https://www.codacy.com/app/charlieoduk/dojo-rooms?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=charlieoduk/dojo-rooms&amp;utm_campaign=Badge_Grade)
 
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+
 [![asciicast](https://asciinema.org/a/uO70YOU772siJpyWS44xzQVyI.png)](https://asciinema.org/a/uO70YOU772siJpyWS44xzQVyI)
 
 
