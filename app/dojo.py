@@ -14,10 +14,9 @@ from app.livingspace import LivingSpace
 from app.fellow import Fellow
 from app.staff import Staff
 
-
 class Dojo(object):
     """docstring for Dojo"""
-
+    
     def __init__(self):
 
         self.dojo_offices = {}
@@ -88,7 +87,6 @@ class Dojo(object):
             print('\n\n')
             self.staff_and_fellows[name] = [
                 random_room, position, room_type]
-
         except:
             if name not in self.unallocated:
                 self.unallocated[name] = []
@@ -123,7 +121,6 @@ class Dojo(object):
                 print('\n\n')
                 return 'Sorry there are no living spaces available for staff'
             return new_staff
-
         else:
             new_fellow = Fellow(name)
             name = new_fellow
@@ -145,7 +142,6 @@ class Dojo(object):
             print(string)
             print('\n\n')
             return string
-
         for names in room_dictionary[name]:
             print(' '+names.name+' ID: '+str(id(names)))
 
@@ -170,15 +166,12 @@ class Dojo(object):
         '''A method that finds all the available rooms. The rooms including the members
         are printed out
         '''
-
         available_rooms = []
         for key, value in room_dictionary.items():
             available_rooms.append(key)
-
         for i in range(len(available_rooms)):
             print('\n')
             print(available_rooms[i])
-
             print(('_'*50))
             for names in room_dictionary[available_rooms[i]]:
                 print(names.name + ' ID:' + str(id(names)))
@@ -200,7 +193,6 @@ class Dojo(object):
                 self.rooms_allocation(self.dojo_livingspaces)
                 print('\n\n')
                 return 'Successfully printed to the screen'
-
             else:
                 orig_stdout = sys.stdout
                 saveFile = open(filename, 'w')
@@ -271,7 +263,6 @@ class Dojo(object):
     def allocate_office_or_living_space(self, room_dicitonary, max_people, room_to_allocate, person_need, person_id):
         '''A method that allocates a person in the unallocated dictionary to either an office or
         a living space that is specified by the user.'''
-
         if len(room_dicitonary[room_to_allocate]) < max_people:
             person_to_remove = []
             for key in self.unallocated.keys():
@@ -279,7 +270,6 @@ class Dojo(object):
                     person_to_remove.append(key)
                     if len(self.unallocated[key]) > 1:
                         self.unallocated[key].remove(person_need)
-
                     room_dicitonary[room_to_allocate].append(key)
                     print('\n\n')
                     print(colored('Successfully allocated ' +
@@ -320,7 +310,6 @@ class Dojo(object):
                 print(old_room)
                 old_room.remove(name)
                 return print_statement
-
             else:
                 print('\n\n')
                 print_string = 'Sorry that room is already full'
@@ -337,7 +326,6 @@ class Dojo(object):
     def reallocate_person(self, person_id, new_room, room_type):
         '''A method that checks the type of room and then sets the arguments based on the room.
         It then calls the allocate_specific_room method to reallocate the person'''
-
         available_rooms = []
         try:
             if room_type == 'OFFICE':
@@ -346,10 +334,8 @@ class Dojo(object):
             elif room_type == 'LIVINGSPACE':
                 room_dicitonary = self.dojo_livingspaces
                 max_people = LivingSpace.max_people
-
             for key in room_dicitonary.keys():
                 available_rooms.append(key)
-
             for i in range(len(available_rooms)):
                 for name in room_dicitonary[available_rooms[i]]:
                     if id(name) == person_id:
@@ -362,7 +348,10 @@ class Dojo(object):
                             return 'No changes made because you are trying to reallocate to the same room'
                         else:
                             return self.allocate_specific_room(new_room, name, old_room, room_dicitonary, max_people)
-
+                else:
+                    print('\n\n')
+                    print(colored('Sorry we couldn\'t find anyone with that ID in the rooms','red'))
+                    print('\n\n')
         except:
             print(
                 colored('Please enter either office or livingspace as the room type', 'red'))
@@ -412,7 +401,6 @@ class Dojo(object):
                     room = Rooms(room_name, room_type)
                     session.add(room)
                     session.commit()
-
             save_state_of_office_or_livingspace(self.dojo_offices, 'OFFICE')
             save_state_of_office_or_livingspace(
                 self.dojo_livingspaces, 'LIVING SPACE')
@@ -421,7 +409,6 @@ class Dojo(object):
                 rooms = []
                 for key, value in office_or_livingspace.items():
                     rooms.append(key)
-
                 for room in rooms:
                     people_in_room_list = office_or_livingspace[room]
                     for person in range(len(people_in_room_list)):
@@ -430,7 +417,6 @@ class Dojo(object):
                         people = People(name, position, room, room_type)
                         session.add(people)
                         session.commit()
-
             save_state_of_assigned_people(self.dojo_offices, 'OFFICE')
             save_state_of_assigned_people(
                 self.dojo_livingspaces, 'LIVING SPACE')
