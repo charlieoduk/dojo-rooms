@@ -2,9 +2,7 @@ from sqlalchemy import *
 from sqlalchemy import Column,Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
-
 Base = declarative_base()
-
 class Rooms(Base):
 
     __tablename__ = "Dojo Rooms"
@@ -16,7 +14,6 @@ class Rooms(Base):
         self.roomname = roomname
         self.roomtype = roomtype
     
-
 class People(Base):
     
     __tablename__ = "Dojo People"
@@ -48,21 +45,3 @@ class Unallocated(Base):
         self.position = position
         self.need_one = need_one
         self.need_two = need_two
-        
-
-        
-
-
-
-
-
-
-        
-        
-
-
-
-
-
-
-
