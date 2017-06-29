@@ -10,7 +10,7 @@ import os.path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 # sys.path.append(os.path.join(os.path.dirname(__file__)))
 
-from Models import *
+from Models import Rooms, People, Unallocated
 from app.office import Office
 from app.livingspace import LivingSpace
 from app.fellow import Fellow
@@ -165,8 +165,7 @@ class Dojo(object):
             return 'Sorry the room does not exist'
         print('\n\n')
 
-    def rooms_allocation(self, rooms
-):
+    def rooms_allocation(self, rooms):
         '''A method that finds all the available rooms. The rooms including the members
         are printed out
         '''
@@ -199,7 +198,7 @@ class Dojo(object):
                 return 'Successfully printed to the screen'
             else:
                 orig_stdout = sys.stdout
-                saveFile = open(filename, 'w')
+                saveFile = open('txt_files/'+filename, 'w')
                 sys.stdout = saveFile
 
                 print('\x1b[1;31m'+'OFFICE ALLOCATION'+'\x1b[0m')
@@ -209,6 +208,9 @@ class Dojo(object):
 
                 sys.stdout = orig_stdout
                 saveFile.close()
+                print('\n\n')
+                print(colored('Successfully printed to a txt file', 'green'))
+                print('\n\n')
                 return 'Successfully printed to a txt file'
         else:
             print('\n\n')
@@ -239,7 +241,7 @@ class Dojo(object):
                 return 'Successfuly printed to the screen'
             else:
                 orig_stdout = sys.stdout
-                saveFile = open(filename, 'w')
+                saveFile = open('txt_files/'+filename, 'w')
                 sys.stdout = saveFile
 
                 print(*('*'*10), sep='-'*9)
@@ -256,7 +258,9 @@ class Dojo(object):
 
                 sys.stdout = orig_stdout
                 saveFile.close()
-
+                print('\n\n')
+                print(colored('Successfully printed to a txt file', 'green'))
+                print('\n\n')
                 return 'Successfully printed to a txt file'
         else:
             print('\n\n')
@@ -364,7 +368,7 @@ class Dojo(object):
     def load_people(self, filename):
         '''A method that loads and populates rooms from a .txt file'''
         try:
-            with open(filename) as f:
+            with open('txt_files/'+filename) as f:
                 data = f.readlines()
 
             reader = csv.reader(data)
