@@ -152,34 +152,44 @@ class MyInteractive (cmd.Cmd):
 
         dojo.print_unallocated(filename)
 
-    
-
     @docopt_cmd
     def do_reallocate_person(self, args):
         """Usage: reallocate_person <person_identifier> <room_type> <new_room_name>"""
-        person_identifier = int(args['<person_identifier>'])
         new_room_name = (args['<new_room_name>']).upper()
         room_type = (args["<room_type>"]).upper()
-    
-        dojo.reallocate_person(person_identifier,new_room_name,room_type)
-
+        try:
+            person_identifier = int(args['<person_identifier>'])
+            dojo.reallocate_person(person_identifier,new_room_name,room_type)
+        except:
+            print('\n\n')
+            print('Person identifier has to be a number')
+            print('\n\n')
+            
     @docopt_cmd
     def do_allocate_office(self, args):
         """Usage: allocate_office <person_identifier> <room_to_allocate>"""
-        person_identifier = int(args['<person_identifier>'])
         room_to_allocate = (args['<room_to_allocate>']).upper()
-
-        dojo.allocate_office(person_identifier, room_to_allocate)
+        try:
+            person_identifier = int(args['<person_identifier>'])
+            dojo.allocate_office(person_identifier, room_to_allocate)
+        except:
+            print('\n\n')
+            print('Person identifier has to be a number')
+            print('\n\n')    
 
     @docopt_cmd
     def do_allocate_livingspace(self, args):
         """Usage: allocate_livingspace <person_identifier> <room_to_allocate>"""
-        person_identifier = int(args['<person_identifier>'])
         room_to_allocate = (args['<room_to_allocate>']).upper()
+        try:
+            person_identifier = int(args['<person_identifier>'])
+            dojo.allocate_livingspace(person_identifier, room_to_allocate)
 
-        dojo.allocate_livingspace(person_identifier, room_to_allocate)
-
-
+        except:
+            print('\n\n')
+            print('Person identifier has to be a number')
+            print('\n\n')
+        
     @docopt_cmd
     def do_load_people(self, args):
         """Usage: load_people <filename>"""
@@ -187,8 +197,6 @@ class MyInteractive (cmd.Cmd):
         print(filename)
 
         dojo.load_people(filename)
-
-
 
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
@@ -205,9 +213,6 @@ class MyInteractive (cmd.Cmd):
         else:
             print('Please type Y or N as your response')
             self.do_quit(arg)
-
-
-        
 
 opt = docopt(__doc__, sys.argv[1:])
 
