@@ -5,8 +5,10 @@ import csv
 from termcolor import colored
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from os import path
 import os.path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+# sys.path.append(os.path.join(os.path.dirname(__file__)))
 
 from Models import *
 from app.office import Office
@@ -14,9 +16,10 @@ from app.livingspace import LivingSpace
 from app.fellow import Fellow
 from app.staff import Staff
 
+
 class Dojo(object):
     """docstring for Dojo"""
-    
+
     def __init__(self):
 
         self.dojo_offices = {}
@@ -24,13 +27,13 @@ class Dojo(object):
         self.staff_and_fellows = {}
         self.unallocated = {}
 
-    def room_creator_method(self, room_dictionary, room_type, room_object, room_name):
+    def room_creator_method(self, rooms, room_type, room_object, room_name):
         ''' A method that creates a new living space or an office. This method is called by the 'create_room'
         method'''
 
-        if room_name not in room_dictionary:
+        if room_name not in rooms:
             new_room = room_object(room_name)
-            room_dictionary[room_name] = []
+            rooms[room_name] = []
             print('\n\n')
             print(colored(
                 'A new {} called {} has been created'.format(room_type, room_name), 'green'))
@@ -47,16 +50,16 @@ class Dojo(object):
         the type of the room. With the parameters set, it calls the method 'room_creator_method' to create the room'''
 
         if room_type == 'OFFICE':
-            room_dictionary = self.dojo_offices
+            rooms = self.dojo_offices
             room_type = room_type.lower()
             return self.room_creator_method(
-                room_dictionary, room_type, Office, room_name)
+                rooms, room_type, Office, room_name)
 
         elif room_type == 'LIVINGSPACE':
-            room_dictionary = self.dojo_livingspaces
+            rooms = self.dojo_livingspaces
             room_type = room_type.lower()
             return self.room_creator_method(
-                room_dictionary, room_type, LivingSpace, room_name)
+                rooms, room_type, LivingSpace, room_name)
 
         else:
             print('\n\n')
@@ -66,20 +69,20 @@ class Dojo(object):
             print('\n\n')
             return 'You have entered an invalid room. Please enter office or Livingspace'
 
-    def allocate_random(self, name, room_type, room_dictionary, living_or_office_object, position):
+    def allocate_random(self, name, room_type, rooms, living_or_office_object, position):
         '''This method checks for all the rooms that have some space then allocates an office or 
         livingspace depending on the user's input. If there is no room available the person is added
         to the unallocated people's dictionary
         This method is called by the add_person method'''
         try:
             rooms_with_space = []
-            for key in room_dictionary.keys():
-                if len(room_dictionary[key]) < living_or_office_object.max_people:
+            for key in rooms.keys():
+                if len(rooms[key]) < living_or_office_object.max_people:
                     rooms_with_space.append(key)
 
             random_room = random.choice(rooms_with_space)
 
-            room_dictionary[random_room].append(name)
+            rooms[random_room].append(name)
             ID = str(id(name))
             print('\n\n')
             print(colored('{}(ID:{}) has been allocated the {} {}'.format(
@@ -132,17 +135,17 @@ class Dojo(object):
                     name, livingspace, self.dojo_livingspaces, LivingSpace, position)
             return new_fellow
 
-    def print_out(self, room_dictionary, name):
+    def print_out(self, rooms, name):
         '''A method that prints out the name of the room as well as the
         members of the room. The method is called by the 'print_room' method '''
         print('\x1b[1;31m'+name+'\x1b[0m')
         print(('_'*50))
-        if len(room_dictionary[name]) == 0:
+        if not rooms[name]:
             string = 'THIS ROOM IS CURRENTLY EMPTY'
             print(string)
             print('\n\n')
             return string
-        for names in room_dictionary[name]:
+        for names in rooms[name]:
             print(' '+names.name+' ID: '+str(id(names)))
 
     def print_room(self, name):
@@ -162,18 +165,19 @@ class Dojo(object):
             return 'Sorry the room does not exist'
         print('\n\n')
 
-    def rooms_allocation(self, room_dictionary):
+    def rooms_allocation(self, rooms
+):
         '''A method that finds all the available rooms. The rooms including the members
         are printed out
         '''
         available_rooms = []
-        for key, value in room_dictionary.items():
+        for key, value in rooms.items():
             available_rooms.append(key)
         for i in range(len(available_rooms)):
             print('\n')
             print(available_rooms[i])
             print(('_'*50))
-            for names in room_dictionary[available_rooms[i]]:
+            for names in rooms[available_rooms[i]]:
                 print(names.name + ' ID:' + str(id(names)))
             print('\n')
         return available_rooms
@@ -268,14 +272,14 @@ class Dojo(object):
             for key in self.unallocated.keys():
                 if person_id == id(key):
                     person_to_remove.append(key)
-                    if len(self.unallocated[key]) > 1:
+                    if self.unallocated[key]:
                         self.unallocated[key].remove(person_need)
                     room_dicitonary[room_to_allocate].append(key)
                     print('\n\n')
                     print(colored('Successfully allocated ' +
                                   key.name+' to '+room_to_allocate, 'green'))
                     print('\n\n')
-            if len(person_to_remove) == 0:
+            if not person_to_remove:
                 print('\n\n')
                 print(colored(
                     'Could not find anyone with that ID in the unallocated list. Please try again', 'red'))
@@ -297,7 +301,7 @@ class Dojo(object):
         self.allocate_office_or_living_space(
             self.dojo_livingspaces, LivingSpace.max_people, room_to_allocate, 'Needs Living space', person_id)
 
-    def allocate_specific_room(self, new_room, name, old_room, room_dicitonary, max_people):
+    def allocate_specific_room(self, new_room, name, old_room, room_dicitonary, max_people, room_type):
         '''A method that allocates a person to a specific room as specified by the user'''
         try:
             room_dicitonary[new_room]
@@ -319,7 +323,7 @@ class Dojo(object):
         except:
             print('\n\n')
             print(
-                colored('Sorry the room does not exist. Please create the room first', 'red'))
+                colored('Sorry we can\'t find that room in the {} directory'.format(room_type), 'red'))
             print('\n\n')
             return 'Sorry the room does not exist. Please create the room first'
 
@@ -347,10 +351,11 @@ class Dojo(object):
                             print('\n\n')
                             return 'No changes made because you are trying to reallocate to the same room'
                         else:
-                            return self.allocate_specific_room(new_room, name, old_room, room_dicitonary, max_people)
+                            return self.allocate_specific_room(new_room, name, old_room, room_dicitonary, max_people, room_type)
                 else:
                     print('\n\n')
-                    print(colored('Sorry we couldn\'t find anyone with that ID in the rooms','red'))
+                    print(
+                        colored('Sorry we couldn\'t find anyone with that ID in the rooms', 'red'))
                     print('\n\n')
         except:
             print(
@@ -358,27 +363,32 @@ class Dojo(object):
 
     def load_people(self, filename):
         '''A method that loads and populates rooms from a .txt file'''
-        with open(filename) as f:
-            data = f.readlines()
+        try:
+            with open(filename) as f:
+                data = f.readlines()
 
-        reader = csv.reader(data)
-        for row in reader:
-            str = row[0]
-            nameArr = str.split()
-            name = nameArr[0]+' '+nameArr[1]
-            position = nameArr[2]
-            try:
-                wants_accomodation = nameArr[3]
-            except:
-                wants_accomodation = 'N'
+            reader = csv.reader(data)
+            for row in reader:
+                str = row[0]
+                nameArr = str.split()
+                name = nameArr[0]+' '+nameArr[1]
+                position = nameArr[2]
+                try:
+                    wants_accomodation = nameArr[3]
+                except:
+                    wants_accomodation = 'N'
 
-            self.add_person(name, position, wants_accomodation)
+                self.add_person(name, position, wants_accomodation)
+        except:
+            print('\n\n')
+            print('That file name does not exist')
+            print('\n\n')
 
     def save_state(self, database_name):
-        '''A method that saves all the rooms and memebers in them. It also saves all the 
+        '''A method that saves all the rooms and members in them. It also saves all the 
         people in the unallocated dictionary'''
         if database_name == None:
-            os.remove('default.db')
+            os.remove('database_files/default.db')
             database = 'default.db'
         else:
             database = database_name+'.db'
@@ -388,7 +398,8 @@ class Dojo(object):
                 'That file name already exists in the database. Please choose a different name ', 'red'))
             print('\n\n')
         else:
-            engine = create_engine('sqlite:///{}'.format(database), echo=False)
+            engine = create_engine(
+                'sqlite:///database_files/{}'.format(database), echo=False)
             Base.metadata.create_all(engine)
             Session = sessionmaker(bind=engine)
             session = Session()
@@ -446,77 +457,79 @@ class Dojo(object):
 
     def load_state(self, database_name):
         '''A method that loads a previously saved state(rooms and the unallocated people'''
-        try:
-            engine = create_engine(
-                'sqlite:///{}'.format(database_name), echo=False)
-            Session = sessionmaker(bind=engine)
-            session = Session()
-
+        database = 'database_files/'+database_name
+        if not os.path.isfile(database):
             print('\n\n')
-            def load_rooms_and_people_in_them():
-                for room in session.query(Rooms).order_by(Rooms.id):
-                    if room.roomtype == 'OFFICE':
-                        room_dictionary = self.dojo_offices
-                    else:
-                        room_dictionary = self.dojo_livingspaces
-                    room_dictionary[room.roomname] = []
-                    for person in session.query(People).order_by(People.id):
-                        if person.room == room.roomname:
-                            if person.position == 'STAFF':
-                                person = Staff(person.name)
-                                room_dictionary[room.roomname].append(person)
-                            else:
-                                person = Fellow(person.name)
-                                room_dictionary[room.roomname].append(person)
+            message = 'The database you requested could not be found. Please ensure you enter in this format \'database.db\''
+            print(colored(message,'red'))
+            print('\n\n')
+            return message
+        engine = create_engine(
+            'sqlite:///database_files/{}'.format(database_name), echo=False)
+        Session = sessionmaker(bind=engine)
+        session = Session()
 
-            def load_unallocated_people():
-                for person in session.query(Unallocated).order_by(Unallocated.id):
-                    name = person.name
-                    position = person.position
-                    need1 = person.need_one
-                    need2 = person.need_two
-                    if need2 == 'No need':
-                        if position == 'STAFF':
-                            name = Staff(name)
-                            self.unallocated[name] = [position, need1]
+        print('\n\n')
+        def load_rooms_and_people_in_them():
+            for room in session.query(Rooms).order_by(Rooms.id):
+                if room.roomtype == 'OFFICE':
+                    rooms = self.dojo_offices
+                else:
+                    rooms = self.dojo_livingspaces
+                rooms[room.roomname] = []
+                for person in session.query(People).order_by(People.id):
+                    if person.room == room.roomname:
+                        if person.position == 'STAFF':
+                            person = Staff(person.name)
+                            rooms[room.roomname].append(person)
                         else:
-                            name = Fellow(name)
-                            self.unallocated[name] = [position, need1]
-                    else:
-                        if position == 'STAFF':
-                            name = Staff(name)
-                            self.unallocated[name] = [position, need1, need2]
-                        else:
-                            name = Fellow(name)
-                            self.unallocated[name] = [position, need1, need2]
+                            person = Fellow(person.name)
+                            rooms[room.roomname].append(person)
 
-            if (len(self.dojo_offices) or len(self.dojo_livingspaces)) < 1:
+        def load_unallocated_people():
+            for person in session.query(Unallocated).order_by(Unallocated.id):
+                name = person.name
+                position = person.position
+                need1 = person.need_one
+                need2 = person.need_two
+                if need2 == 'No need':
+                    if position == 'STAFF':
+                        name = Staff(name)
+                        self.unallocated[name] = [position, need1]
+                    else:
+                        name = Fellow(name)
+                        self.unallocated[name] = [position, need1]
+                else:
+                    if position == 'STAFF':
+                        name = Staff(name)
+                        self.unallocated[name] = [position, need1, need2]
+                    else:
+                        name = Fellow(name)
+                        self.unallocated[name] = [position, need1, need2]
+
+        if (not self.dojo_offices) and (not self.dojo_livingspaces):
+            load_rooms_and_people_in_them()
+            load_unallocated_people()
+        else:
+            response = (input(
+                'Please be advised that loading state will get rid of all your current allocations.'
+                ' Do you want to continue? (Y/N)  ')).upper()
+            print('\n\n')
+            if response == 'Y':
+                self.dojo_offices.clear()
+                self.dojo_livingspaces.clear()
                 load_rooms_and_people_in_them()
                 load_unallocated_people()
+
+            elif response == 'N':
+                print('You may continue with your current session')
+
             else:
-                response = (input(
-                    'Please be advised that loading state will get rid of all your current allocations.'
-                    ' Do you want to continue? (Y/N)  ')).upper()
-                print('\n\n')
-                if response == 'Y':
-                    self.dojo_offices.clear()
-                    self.dojo_livingspaces.clear()
-                    load_rooms_and_people_in_them()
-                    load_unallocated_people()
+                print('Please respond with either Y or N')
 
-                elif response == 'N':
-                    print('You may continue with your current session')
+        print(
+            colored('You have successfully loaded the previously saved state!!!', 'green'))
+        print('\n\n')
+        return 'You have successfully loaded the previously saved state!!!'
 
-                else:
-                    print('Please respond with either Y or N')
-
-            print(
-                colored('You have successfully loaded the previously saved state!!!', 'green'))
-            print('\n\n')
-            return 'You have successfully loaded the previously saved state!!!'
-
-            Base.metadata.create_all(engine)
-        except:
-            print(
-                colored('Please enter the database name in the format \'database.db\'', 'red'))
-            print('\n\n')
+        Base.metadata.create_all(engine)
