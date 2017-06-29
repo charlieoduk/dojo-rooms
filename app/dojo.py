@@ -8,14 +8,12 @@ from sqlalchemy.orm import sessionmaker
 from os import path
 import os.path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-# sys.path.append(os.path.join(os.path.dirname(__file__)))
 
-from Models import Rooms, People, Unallocated
+from Models import Base, Rooms, People, Unallocated
 from app.office import Office
 from app.livingspace import LivingSpace
 from app.fellow import Fellow
 from app.staff import Staff
-
 
 class Dojo(object):
     """docstring for Dojo"""
