@@ -15,7 +15,7 @@ class TestDojo(unittest.TestCase):
         
 
     # check if office is instance of room
-    def test_office_is_instance_of_room(self):
+    def test_office_is_instance_of_class_room(self):
         self.assertTrue(issubclass(Office, Room))
 
     # check if living space is instance of room
